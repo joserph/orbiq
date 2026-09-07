@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\Clients\Pages;
+namespace App\Filament\Resources\Farms\Pages;
 
-use App\Filament\Resources\Clients\ClientResource;
+use App\Filament\Resources\Farms\FarmResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
-class ListClients extends ListRecords
+class ListFarms extends ListRecords
 {
-    protected static string $resource = ClientResource::class;
+    protected static string $resource = FarmResource::class;
 
     protected function getHeaderActions(): array
     {

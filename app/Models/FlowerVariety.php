@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\HasUserAudit;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class FlowerVariety extends Model
 {
@@ -22,6 +23,12 @@ class FlowerVariety extends Model
         return [
             'status' => 'boolean',
         ];
+    }
+
+    public function farms(): BelongsToMany
+    {
+        return $this->belongsToMany(Farm::class)
+            ->withTimestamps();
     }
 
 }

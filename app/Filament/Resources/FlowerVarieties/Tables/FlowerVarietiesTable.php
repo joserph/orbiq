@@ -43,7 +43,8 @@ class FlowerVarietiesTable
                 EditAction::make()
                     ->modal()
                     ->modalHeading('Edit Flower Variety'),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->requiresConfirmation(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
