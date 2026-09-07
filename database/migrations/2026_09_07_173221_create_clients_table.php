@@ -13,6 +13,58 @@ return new class extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
+
+            // Basic Information
+            $table->string('name');
+            $table->string('zip_code')->nullable();
+            $table->text('address')->nullable();
+
+            // Location
+            $table->foreignId('country_id')
+                ->nullable()
+                ->constrained('countries')
+                ->nullOnDelete();
+
+            $table->foreignId('state_id')
+                ->nullable()
+                ->constrained('states')
+                ->nullOnDelete();
+
+            $table->foreignId('city_id')
+                ->nullable()
+                ->constrained('cities')
+                ->nullOnDelete();
+
+            // Load Types
+            $table->json('load_types')->nullable();
+
+            // POA
+            $table->boolean('poa')
+                ->default(false);
+
+            $table->string('poa_document')
+                ->nullable();
+
+            // Contact Information
+            $table->json('emails')->nullable();
+            $table->json('owners')->nullable();
+            $table->json('phones')->nullable();
+
+            // Status
+            $table->boolean('status')
+                ->default(true);
+
+            // User Audit
+            $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            $table->foreignId('updated_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+                
             $table->timestamps();
         });
     }

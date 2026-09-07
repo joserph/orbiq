@@ -13,7 +13,21 @@ return new class extends Migration
     {
         Schema::create('client_commercializer', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('client_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->foreignId('commercializer_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->timestamps();
+
+            $table->unique([
+                'client_id',
+                'commercializer_id',
+            ]);
         });
     }
 
