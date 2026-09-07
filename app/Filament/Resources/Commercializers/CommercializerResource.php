@@ -7,6 +7,7 @@ use App\Filament\Resources\Commercializers\Pages\EditCommercializer;
 use App\Filament\Resources\Commercializers\Pages\ListCommercializers;
 use App\Filament\Resources\Commercializers\Schemas\CommercializerForm;
 use App\Filament\Resources\Commercializers\Tables\CommercializersTable;
+use App\Filament\Resources\Commercializers\Schemas\CommercializerInfolist;
 use App\Models\Commercializer;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -25,6 +26,11 @@ class CommercializerResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return CommercializerForm::configure($schema);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return CommercializerInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table

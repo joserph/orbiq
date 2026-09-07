@@ -9,6 +9,7 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Actions\ViewAction;
 
 class FlowerVarietiesTable
 {
@@ -31,10 +32,14 @@ class FlowerVarietiesTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->recordAction('view')
             ->filters([
                 //
             ])
             ->recordActions([
+                ViewAction::make()
+                    ->modal()
+                    ->modalHeading('Flower Variety Information'),
                 EditAction::make()
                     ->modal()
                     ->modalHeading('Edit Flower Variety'),
@@ -44,6 +49,6 @@ class FlowerVarietiesTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])->recordUrl(fn ($record) => null);
     }
 }
