@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\LogisticsCompanies\Schemas;
 
 use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Infolist;
@@ -30,6 +31,13 @@ class LogisticsCompanyInfolist
                                 'CUSTOMS_BROKER' => 'Customs Broker',
                                 default => $state,
                             }),
+                        TextEntry::make('contact_email')
+                            ->label('Email')
+                            ->placeholder('-'),
+
+                        TextEntry::make('contact_phone')
+                            ->label('Phone')
+                            ->placeholder('-'),
 
                         TextEntry::make('web')
                             ->label('Website')
@@ -69,6 +77,26 @@ class LogisticsCompanyInfolist
                             ->height(120)
                             ->width(120),
                     ]),
+                
+                Section::make('Contact Information')
+                    ->schema([
+                        RepeatableEntry::make('emails')
+                            ->label('Emails')
+                            ->schema([
+                                TextEntry::make('email')
+                                    ->label('Email'),
+                            ])
+                            ->visible(fn ($state) => filled($state)),
+
+                        RepeatableEntry::make('phones')
+                            ->label('Phones')
+                            ->schema([
+                                TextEntry::make('phone')
+                                    ->label('Phone'),
+                            ])
+                            ->visible(fn ($state) => filled($state)),
+                    ])
+                    ->columns(2),
 
                 Section::make('Status')
                     ->schema([

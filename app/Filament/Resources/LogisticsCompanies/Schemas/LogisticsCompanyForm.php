@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\LogisticsCompanies\Schemas;
 
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -44,6 +45,16 @@ class LogisticsCompanyForm
                             ->label('Website')
                             ->url()
                             ->maxLength(255),
+
+                        TextInput::make('contact_email')
+                            ->label('Email')
+                            ->email()
+                            ->maxLength(255),
+
+                        TextInput::make('contact_phone')
+                            ->label('Phone')
+                            ->tel()
+                            ->maxLength(50),
 
                         TextInput::make('ruc')
                             ->label('RUC')
@@ -118,6 +129,34 @@ class LogisticsCompanyForm
                             ->disabled(fn (callable $get) => ! $get('state_id')),
                     ])
                     ->columns(3),
+
+                Section::make('Contact Information')
+                    ->schema([
+                        Repeater::make('emails')
+                            ->label('Emails')
+                            ->schema([
+                                TextInput::make('email')
+                                    ->label('Email')
+                                    ->email()
+                                    ->required(),
+                            ])
+                            ->defaultItems(0)
+                            ->addActionLabel('Add Email')
+                            ->collapsible(),
+
+                        Repeater::make('phones')
+                            ->label('Phones')
+                            ->schema([
+                                TextInput::make('phone')
+                                    ->label('Phone')
+                                    ->tel()
+                                    ->required(),
+                            ])
+                            ->defaultItems(0)
+                            ->addActionLabel('Add Phone')
+                            ->collapsible(),
+                    ])
+                    ->columns(2),
 
                 Section::make('Company Logo')
                     ->schema([

@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('company_type');
             $table->string('web')->nullable();
             $table->string('ruc', 50)->nullable();
+            $table->string('contact_email')->nullable();
+            $table->string('contact_phone')->nullable();
 
             // Address
             $table->string('address')->nullable();
@@ -30,6 +32,10 @@ return new class extends Migration
 
             // Branding
             $table->string('logo')->nullable();
+
+            // Contact Information
+            $table->json('emails')->nullable();
+            $table->json('phones')->nullable();
 
             // Status
             $table->boolean('status')->default(true);

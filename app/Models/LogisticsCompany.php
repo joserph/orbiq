@@ -21,16 +21,22 @@ class LogisticsCompany extends Model
         'web',
         'ruc',
         'address',
+        'contact_email',
+        'contact_phone',
         'country_id',
         'state_id',
         'city_id',
         'logo',
+        'emails',
+        'phones',
         'status',
     ];
 
     protected function casts(): array
     {
         return [
+            'emails' => 'array',
+            'phones' => 'array',
             'status' => 'boolean',
         ];
     }
