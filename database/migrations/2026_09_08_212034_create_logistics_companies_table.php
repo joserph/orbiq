@@ -13,6 +13,38 @@ return new class extends Migration
     {
         Schema::create('logistics_companies', function (Blueprint $table) {
             $table->id();
+
+            // General Information
+            $table->string('name');
+            $table->string('company_type');
+            $table->string('web')->nullable();
+            $table->string('ruc', 50)->nullable();
+
+            // Address
+            $table->string('address')->nullable();
+
+            // Location
+            $table->foreignId('country_id')->nullable();
+            $table->foreignId('state_id')->nullable();
+            $table->foreignId('city_id')->nullable();
+
+            // Branding
+            $table->string('logo')->nullable();
+
+            // Status
+            $table->boolean('status')->default(true);
+
+            // Audit
+            $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            $table->foreignId('updated_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
             $table->timestamps();
         });
     }
