@@ -6,6 +6,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Nnjeim\World\Models\City;
 use Nnjeim\World\Models\Country;
@@ -132,32 +133,34 @@ class FlightForm
                 Toggle::make('status')
                     ->label('Active')
                     ->default(true),
-                // TextInput::make('awb')
-                //     ->required(),
-                // TextInput::make('type_awb')
-                //     ->required(),
-                // Select::make('logistics_company_id')
-                //     ->relationship('logisticsCompany', 'name'),
-                // Select::make('airline_id')
-                //     ->relationship('airline', 'name'),
-                // DatePicker::make('date'),
-                // DatePicker::make('arrival_date'),
-                // Select::make('origin_country_id')
-                //     ->relationship('originCountry', 'name'),
-                // Select::make('origin_city_id')
-                //     ->relationship('originCity', 'name'),
-                // Select::make('destination_country_id')
-                //     ->relationship('destinationCountry', 'name'),
-                // Select::make('destination_city_id')
-                //     ->relationship('destinationCity', 'name'),
-                // TextInput::make('consignee'),
-                // TextInput::make('entry_number'),
-                // Toggle::make('status')
-                //     ->required(),
-                // TextInput::make('created_by')
-                //     ->numeric(),
-                // TextInput::make('updated_by')
-                //     ->numeric(),
+                Section::make('Box Configuration')
+                    ->description('Enable the box types available for this AWB.')
+                    ->columns(5)
+                    ->schema([
+
+                        Toggle::make('fb_status')
+                            ->label('FB')
+                            ->default(false),
+
+                        Toggle::make('hb_status')
+                            ->label('HB')
+                            ->default(true),
+
+                        Toggle::make('qb_status')
+                            ->label('QB')
+                            ->default(true),
+
+                        Toggle::make('eb_status')
+                            ->label('EB')
+                            ->default(true),
+
+                        Toggle::make('db_status')
+                            ->label('DB')
+                            ->default(false),
+
+                    ])
+                    ->columnSpanFull(),
+                
             ]);
     }
 }

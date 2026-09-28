@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Flights\Tables;
 
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -99,6 +100,19 @@ class FlightsTable
                 EditAction::make()
                     ->modal()
                     ->modalHeading('Edit Flight'),
+                // Action::make('coordinations')
+                //     ->label('Coordinations')
+                //     ->icon('heroicon-o-clipboard-document-list')
+                //     ->url(fn ($record) => \App\Filament\Resources\FlightCoordinations\FlightCoordinationResource::getUrl(
+                //         'index'
+                //     ) . '?flight=' . $record->id),
+                Action::make('coordinations')
+                    ->label('Coordinations')
+                    ->icon('heroicon-o-clipboard-document-list')
+                    ->url(fn ($record) => \App\Filament\Resources\Flights\FlightResource::getUrl(
+                        'coordinations',
+                        ['record' => $record]
+                    )),
                 DeleteAction::make()
                     ->requiresConfirmation(),
             ])

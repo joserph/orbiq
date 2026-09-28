@@ -47,6 +47,22 @@ return new class extends Migration
 
             // Status
             $table->boolean('status')->default(true);
+            
+            // Status type box
+            $table->boolean('fb_status')
+                ->default(false);
+
+            $table->boolean('hb_status')
+                ->default(true);
+
+            $table->boolean('qb_status')
+                ->default(true);
+
+            $table->boolean('eb_status')
+                ->default(true);
+
+            $table->boolean('db_status')
+                ->default(false);
 
             // Audit
             $table->foreignId('created_by')

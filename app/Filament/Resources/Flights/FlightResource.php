@@ -14,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use App\Filament\Resources\Flights\Pages\FlightCoordinations;
 
 class FlightResource extends Resource
 {
@@ -51,6 +52,7 @@ class FlightResource extends Resource
             'index' => ListFlights::route('/'),
             'create' => CreateFlight::route('/create'),
             'edit' => EditFlight::route('/{record}/edit'),
+            'coordinations' => FlightCoordinations::route('/{record}/coordinations'),
         ];
     }
 }
