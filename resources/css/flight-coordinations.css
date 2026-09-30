@@ -1,0 +1,1253 @@
+/* ============================================================
+       DESKTOP
+       ============================================================ */
+
+    .flight-report {
+        width: 100%;
+    }
+
+    .flight-report-desktop {
+        display: block;
+        /* border: 1px solid #e5e7eb;  */
+        border-radius: 12px;
+    }
+
+    .flight-report-mobile {
+        display: none;
+    }
+
+    .flight-client {
+        margin-bottom: 0;
+        overflow: visible;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px 12px 0px 0px;
+        background: #fff;
+        box-shadow:
+            0 1px 2px rgb(0 0 0 / 0.05);
+    }
+
+    .dark .flight-client {
+        background: rgb(17 24 39);
+        /* border-color: rgb(55 65 81); */
+    }
+
+    /* .flight-client-title {
+        padding: 12px 16px;
+
+        background: rgb(249 250 251);
+
+        border-bottom: 1px solid rgb(209 213 219);
+
+        font-size: 15px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .dark .flight-client-title {
+        background: rgb(31 41 55);
+        border-color: rgb(55 65 81);
+        color: white;
+    } */
+     .flight-client-title {
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+        /* background: rgb(249 250 251); */
+        /* border-bottom: 1px solid rgb(209 213 219); */
+        font-size: 13px;
+        font-weight: 700;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .dark .flight-client-title {
+        background: rgb(31 41 55);
+        /* border-color: rgb(55 65 81); */
+        color: white;
+    }
+
+    .flight-report-scroll {
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        width: 100%;
+    }
+
+    .flight-grid,
+    .flight-global-grid {
+        display: grid;
+        /* width: max-content; */
+        min-width: 100%;
+        /* border-radius: 12px; */
+    }
+
+    .flight-group-header {
+        min-height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 6px;
+        border-right: 1px solid #d1d5db;
+        border-bottom: 1px solid #d1d5db;
+        border-top: 1px solid #d1d5db;
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .flight-group-header.information {
+        background: #e0e1e1;
+    }
+
+    .flight-group-header.coordinated {
+        background: rgb(229 231 235);
+    }
+
+    .flight-group-header.received {
+        background: rgb(220 252 231);
+    }
+
+    .flight-group-header.control {
+        background: rgb(243 244 246);
+    }
+
+    .flight-group-header.empty {
+        background: rgb(243 244 246);
+    }
+
+    .flight-header-cell {
+        min-height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px 6px;
+        border-right: 1px solid rgb(209 213 219);
+        border-bottom: 1px solid rgb(209 213 219);
+        background: rgb(249 250 251);
+        font-size: 11px;
+        font-weight: 700;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .flight-header-cell.coordinated {
+        background: rgb(243 244 246);
+    }
+
+    .flight-header-cell.received {
+        background: rgb(240 253 244);
+    }
+
+    .flight-header-cell.returns {
+        background: rgb(254 249 195);
+    }
+
+    .flight-cell {
+        min-height: 38px;
+
+        display: flex;
+        align-items: center;
+
+        padding: 5px 7px;
+
+        border-right: 1px solid rgb(229 231 235);
+        border-bottom: 1px solid rgb(229 231 235);
+
+        background: white;
+
+        font-size: 12px;
+        line-height: 1.25;
+    }
+
+    .dark .flight-cell {
+        background: rgb(17 24 39);
+        border-color: rgb(55 65 81);
+        color: rgb(229 231 235);
+    }
+
+    .flight-cell.text {
+        overflow-wrap: anywhere;
+    }
+
+    .flight-cell.number {
+        justify-content: center;
+        text-align: center;
+        white-space: nowrap;
+        font-weight: 500;
+    }
+
+    .flight-cell.coordinated {
+        background: rgb(249 250 251);
+    }
+
+    .flight-cell.received {
+        background: rgb(240 253 244);
+    }
+
+    .flight-cell.returns {
+        background: rgb(254 249 195);
+    }
+
+    .flight-total-label,
+    .flight-total-cell {
+        min-height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        /* border-top: 2px solid rgb(156 163 175); */
+        border-right: 1px solid rgb(209 213 219);
+        border-bottom: 1px solid rgb(209 213 219);
+        background: rgb(249 250 251);
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .flight-total-label {
+        justify-content: flex-end;
+    }
+
+    .dark .flight-total-label,
+    .dark .flight-total-cell {
+        background: rgb(31 41 55);
+        border-color: rgb(75 85 99);
+        color: white;
+    }
+
+    .flight-global-total {
+        margin-top: 0;
+        overflow-x: auto;
+        overflow: visible;
+        border: 1px solid rgb(156 163 175);
+        border-radius: 0px 0px 10px 10px;
+        background: rgb(229 231 235);
+    }
+
+    .flight-global-label,
+    .flight-global-cell {
+        min-height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        /* border-right: 1px solid rgb(156 163 175); */
+        border-right: 1px solid #d1d5db;
+        /* background: rgb(229 231 235); */
+        font-size: 13px;
+        font-weight: 800;
+    }
+    .flight-global-cell-e {
+        border-right: 0px solid #d1d5db;
+    }
+
+    .flight-global-label {
+        justify-content: flex-end;
+    }
+
+    .flight-search {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 8px;
+    }
+
+    .flight-search-wrapper {
+        position: relative;
+        width: 300px;
+    }
+
+    .flight-search-input {
+        width: 100%;
+        height: 38px;
+
+        padding: 0 38px 0 14px;
+
+        border: 1px solid rgb(209 213 219);
+        border-radius: 8px;
+
+        background: white;
+
+        font-size: 13px;
+        outline: none;
+    }
+
+    .flight-search-input:focus {
+        border-color: rgb(99 102 241);
+        box-shadow: 0 0 0 1px rgb(99 102 241);
+    }
+
+    .flight-search-clear {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 0;
+        background: transparent;
+        color: rgb(156 163 175);
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+    .flight-search-clear:hover {
+        color: rgb(75 85 99);
+    }
+
+    @media (max-width: 767px) {
+        .flight-search {
+            justify-content: stretch;
+        }
+
+        .flight-search-wrapper {
+            width: 100%;
+        }
+    }
+
+
+    /* ============================================================
+       TABLET
+       ============================================================ */
+
+    @media (max-width: 1100px) {
+
+        .flight-report-scroll {
+            overflow-x: auto;
+        }
+
+        .flight-grid,
+        .flight-global-grid {
+            min-width: 1500px;
+        }
+
+    }
+
+
+    /* ============================================================
+       MOBILE
+       ============================================================ */
+
+    @media (max-width: 767px) {
+
+        /*
+        |--------------------------------------------------------------------------
+        | MOBILE
+        |--------------------------------------------------------------------------
+        |
+        | On mobile we KEEP the desktop table.
+        | The table gets its own internal horizontal scroll.
+        |
+        */
+
+        .flight-report-desktop {
+            display: block;
+        }
+
+        .flight-report-mobile {
+            display: none;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Client table
+        |--------------------------------------------------------------------------
+        */
+
+        .flight-client {
+            margin-bottom: 0;
+
+            border-radius: 0;
+            border-left: 0;
+            border-right: 0;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Internal horizontal scroll
+        |--------------------------------------------------------------------------
+        */
+
+        .flight-report-scroll {
+            width: 100%;
+
+            overflow-x: auto;
+            overflow-y: hidden;
+
+            -webkit-overflow-scrolling: touch;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Keep the report wide enough to remain readable
+        |--------------------------------------------------------------------------
+        */
+
+        .flight-grid {
+            width: max-content;
+
+            min-width: 1500px;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Global total
+        |--------------------------------------------------------------------------
+        */
+
+        .flight-global-total {
+            margin-top: 0;
+
+            border-radius: 0;
+
+            border-left: 0;
+            border-right: 0;
+        }
+
+        .flight-global-grid {
+            width: max-content;
+
+            min-width: 1500px;
+        }
+
+    }
+    .flight-empty-state {
+        width: 100%;
+        min-height: 260px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #dbd7d7;
+    }
+
+    .flight-empty-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 9999px;
+        background: rgb(243 244 246);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgb(156 163 175);
+    }
+
+    .flight-empty-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .flight-empty-text {
+        margin-top: 16px;
+        font-size: 14px;
+        font-weight: 600;
+        color: rgb(17 24 39);
+    }
+
+    .dark .flight-empty-state {
+        background: rgb(17 24 39);
+    }
+
+    .dark .flight-empty-icon {
+        background: rgb(31 41 55);
+        color: rgb(156 163 175);
+    }
+
+    .dark .flight-empty-text {
+        color: white;
+    }
+
+    .flight-summary {
+        width: 100%;
+        margin-bottom: 18px;
+        overflow: hidden;
+        border: 1px solid rgb(229 231 235);
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+    }
+
+    .dark .flight-summary {
+        border-color: rgb(55 65 81);
+        background: rgb(17 24 39);
+    }
+
+
+    /* =========================================================
+    INFORMACIÓN PRINCIPAL
+    ========================================================= */
+
+    .flight-summary-main {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 0 !important;
+        width: 100%;
+        padding: 14px 18px;
+    }
+
+
+    .flight-summary-item {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center;
+        min-width: 0;
+        padding: 0 18px;
+        border-right: 1px solid rgb(229 231 235);
+    }
+
+    .flight-summary-item:first-child {
+        padding-left: 0;
+    }
+
+    .flight-summary-awb {
+        min-width: 170px;
+    }
+
+    .flight-summary-item:last-of-type {
+        border-right: none;
+    }
+
+
+    /* =========================================================
+    LABELS
+    ========================================================= */
+
+    .flight-summary-label {
+        display: block;
+        margin-bottom: 2px;
+        color: rgb(107 114 128);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        line-height: 1.2;
+        text-transform: uppercase;
+    }
+
+    .flight-summary-value {
+        display: block;
+        color: rgb(17 24 39);
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.3;
+        white-space: nowrap;
+    }
+
+    .dark .flight-summary-value {
+        color: white;
+    }
+
+
+    /* =========================================================
+    RUTA
+    ========================================================= */
+
+    .flight-summary-route {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 12px !important;
+        margin-left: auto;
+        padding-left: 20px;
+    }
+
+    .flight-summary-route > div {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .flight-summary-route-value {
+        color: rgb(17 24 39);
+        font-size: 14px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .dark .flight-summary-route-value {
+        color: white;
+    }
+
+    .flight-summary-arrow {
+        color: rgb(156 163 175);
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+
+    /* =========================================================
+    BOX TYPES
+    ========================================================= */
+
+    .flight-box-types {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 6px !important;
+
+        min-height: 42px;
+        padding: 7px 18px;
+
+        border-top: 1px solid rgb(229 231 235);
+        background: rgb(249 250 251);
+    }
+
+    .dark .flight-box-types {
+        border-color: rgb(55 65 81);
+        background: rgb(31 41 55);
+    }
+
+    .flight-box-label {
+        margin-right: 6px;
+        color: rgb(107 114 128);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    .flight-box-type {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+
+        padding: 3px 9px;
+
+        border: 1px solid rgb(229 231 235);
+        border-radius: 5px;
+
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .flight-box-type.active {
+        border-color: rgb(167 243 208);
+        background: rgb(240 253 244);
+        color: rgb(22 163 74);
+    }
+
+    .flight-box-type.inactive {
+        border-color: rgb(229 231 235);
+        background: white;
+        color: rgb(156 163 175);
+    }
+
+    .dark .flight-box-type.inactive {
+        border-color: rgb(75 85 99);
+        background: rgb(17 24 39);
+        color: rgb(107 114 128);
+    }
+
+
+    /* =========================================================
+    RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 1100px) {
+
+        .flight-summary-main {
+            flex-wrap: wrap !important;
+            gap: 12px !important;
+        }
+
+        .flight-summary-item {
+            border-right: none;
+            padding: 0 12px 0 0;
+        }
+
+        .flight-summary-route {
+            width: 100%;
+            margin-left: 0;
+            padding-left: 0;
+        }
+    }
+
+
+    @media (max-width: 700px) {
+
+        .flight-summary-main {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+
+        .flight-summary-item {
+            width: 100%;
+            padding: 0;
+        }
+
+        .flight-summary-route {
+            width: 100%;
+        }
+    }
+
+    .flight-client-group {
+        overflow: hidden;
+        border: 1px solid rgb(209 213 219);
+        border-radius: 8px;
+        background: white;
+        margin-bottom: 12px;
+    }
+
+    .dark .flight-client-group {
+        border-color: rgb(55 65 81);
+        background: rgb(17 24 39);
+    }
+
+    /* ==========================================
+   BORDE EXTERIOR DEL BLOQUE DEL CLIENTE
+   ========================================== */
+
+    /* Nombre del cliente */
+    /* .flight-client-title {
+        border-top: 1px solid rgb(209 213 219);
+        border-left: 1px solid rgb(209 213 219);
+        border-right: 1px solid rgb(209 213 219);
+
+        border-radius: 8px 8px 0 0;
+    } */
+
+    /* Encabezado de grupos */
+    /* .flight-group-header {
+        border-left: 1px solid rgb(209 213 219);
+        border-right: 1px solid rgb(209 213 219);
+    } */
+
+    /* Encabezados de columnas */
+    .flight-header-cell:first-child {
+        border-left: 0;
+    }
+
+    .flight-header-cell:last-child {
+        border-right: 0;
+    }
+
+    .flight-cell:first-child {
+        border-left: 0;
+    }
+
+    .flight-cell:last-child {
+        border-right: 0;
+    }
+
+    /* Última fila: cierre inferior */
+    .flight-total-row {
+        border-left: 1px solid rgb(209 213 219);
+        border-right: 1px solid rgb(209 213 219);
+        border-bottom: 1px solid rgb(209 213 219);
+
+        border-radius: 0 0 8px 8px;
+    }
+
+    /* Dark mode */
+    .dark .flight-client-title,
+    .dark .flight-group-header,
+    .dark .flight-header-cell:first-child,
+    .dark .flight-header-cell:last-child,
+    .dark .flight-total-row {
+        border-color: rgb(55 65 81);
+    }
+    .flight-header-cell:last-child,
+    .flight-cell:last-child {
+        border-right: 1px solid rgb(209 213 219);
+    }
+
+    .flight-total-row {
+        border-right: 1px solid rgb(209 213 219);
+    }
+    .client-group {
+        border-left: 1px solid #d1d5db;
+        border-right: 1px solid #d1d5db;
+    }
+
+    .client-group-header {
+        border-top: 1px solid #d1d5db;
+        border-left: 1px solid #d1d5db;
+        border-right: 1px solid #d1d5db;
+    }
+
+    .client-group-total {
+        border-left: 1px solid #d1d5db;
+        border-right: 1px solid #d1d5db;
+        border-bottom: 1px solid #d1d5db;
+    }
+
+    .flight-cell.actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .coordination-action {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 7px;
+        border: 1px solid transparent;
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+    .coordination-action svg {
+        width: 17px;
+        height: 17px;
+    }
+
+    .coordination-action.edit {
+        color: #6b7280;
+    }
+
+    .coordination-action.edit:hover {
+        background: #f3f4f6;
+        color: #2563eb;
+    }
+
+    .coordination-action.delete {
+        color: #ef4444;
+    }
+
+    .coordination-action.delete:hover {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    
+    /* =========================================================
+    RESUMEN DE COORDINACIÓN
+    ========================================================= */
+
+    .flight-coordination-summary {
+        width: 100%;
+        margin: 18px 0 24px;
+        border: 1px solid #d9dee7;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #ffffff;
+    }
+
+    .flight-coordination-summary-header {
+        padding: 14px 18px;
+        border-bottom: 1px solid #d9dee7;
+        background: #ffffff;
+    }
+
+    .flight-coordination-summary-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .flight-coordination-summary-table {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .summary-grid {
+        display: grid;
+        min-width: max-content;
+    }
+
+    .summary-cell {
+        min-height: 38px;
+        padding: 8px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-right: 1px solid #dfe3e8;
+        border-bottom: 1px solid #dfe3e8;
+
+        font-size: 13px;
+        color: #374151;
+    }
+
+    .summary-cell:last-child {
+        border-right: 0;
+    }
+
+    /* CLIENTE */
+
+    .summary-client-header,
+    .summary-client {
+        justify-content: flex-start;
+        padding-left: 16px;
+    }
+
+    .summary-client-header {
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .summary-client {
+        font-weight: 500;
+        color: #1f2937;
+    }
+
+    /* GROUP HEADERS */
+
+    .summary-group {
+        min-height: 38px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        border-right: 1px solid #dfe3e8;
+        border-bottom: 1px solid #dfe3e8;
+    }
+
+    .summary-group.coordinated {
+        background: #eef0f4;
+        color: #374151;
+    }
+
+    .summary-group.received {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    /* SUB HEADER */
+
+    .summary-grid-subheader {
+        background: #f8fafc;
+    }
+
+    .summary-grid-subheader .summary-cell {
+        min-height: 34px;
+        padding: 6px 8px;
+
+        font-size: 11px;
+        font-weight: 700;
+        color: #4b5563;
+
+        text-transform: uppercase;
+    }
+
+    /* RECEIVED */
+
+    .received-cell {
+        background: #f2fcf5;
+    }
+
+    /* FULL */
+
+    .summary-full {
+        font-weight: 600;
+    }
+
+    /* TOTAL */
+
+    .summary-grid-total {
+        background: #f3f4f6;
+    }
+
+    .summary-grid-total .summary-cell {
+        min-height: 42px;
+
+        font-weight: 700;
+        color: #111827;
+
+        border-top: 2px solid #9ca3af;
+    }
+
+    .summary-total-label {
+        justify-content: flex-end;
+        padding-right: 16px;
+    }
+
+    .summary-grid-total .received-cell {
+        background: #e8f8ed;
+    }
+
+
+    /* =========================================================
+    RESPONSIVE
+    ========================================================= */
+
+    @media (max-width: 900px) {
+
+        .flight-coordination-summary {
+            border-radius: 8px;
+        }
+
+        .flight-coordination-summary-title {
+            font-size: 15px;
+        }
+
+        .summary-cell {
+            font-size: 12px;
+            min-height: 36px;
+        }
+
+        .summary-group {
+            font-size: 11px;
+        }
+    }
+
+    /* =========================================================
+   RESUMEN DE COORDINACIÓN - COLLAPSED
+   ========================================================= */
+
+.coordination-summary {
+    width: 100%;
+    margin-top: 20px;
+    border: 1px solid #d9dee7;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #ffffff;
+}
+
+/* Barra superior */
+
+.coordination-summary-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 16px 24px;
+
+    cursor: pointer;
+    user-select: none;
+
+    font-size: 18px;
+    font-weight: 700;
+    color: #263244;
+
+    list-style: none;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+/* Quitar triángulo nativo */
+
+.coordination-summary-header::-webkit-details-marker {
+    display: none;
+}
+
+.coordination-summary-header::marker {
+    display: none;
+}
+
+.coordination-summary-header:hover {
+    background: #f8fafc;
+}
+
+/* Flecha */
+
+.coordination-summary-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+    height: 28px;
+
+    color: #64748b;
+
+    transition: transform 0.2s ease;
+}
+
+.coordination-summary-arrow svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Cuando está abierto */
+
+.coordination-summary[open]
+    .coordination-summary-arrow {
+    transform: rotate(180deg);
+}
+
+/* Contenido */
+
+.coordination-summary-content {
+    border-top: 1px solid #e2e8f0;
+    overflow-x: auto;
+}
+
+/* Tabla */
+
+.coordination-summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 11px;
+}
+
+/* Celdas */
+
+.coordination-summary-table th,
+.coordination-summary-table td {
+    padding: 11px 12px;
+
+    border-right: 1px solid #dce1e8;
+    border-bottom: 1px solid #dce1e8;
+
+    text-align: center;
+}
+
+/* Primera columna */
+
+.coordination-summary-table th:first-child,
+.coordination-summary-table td:first-child {
+    width: 32%;
+    text-align: left;
+}
+
+/* Encabezados */
+
+.coordination-summary-table thead th {
+    background: #f8fafc;
+    font-weight: 700;
+    color: #334155;
+}
+
+/* Coordinado */
+
+.coordination-summary-table .coordinated-header {
+    background: #e9ebef;
+}
+
+/* Recibido */
+
+.coordination-summary-table .received-header {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.coordination-summary-table .received-cell {
+    background: #f0fdf4;
+}
+
+/* Nombre cliente */
+
+.coordination-summary-table .client-name {
+    font-weight: 500;
+    color: #334155;
+}
+
+/* FULL */
+
+.coordination-summary-table .full-value {
+    font-weight: 700;
+}
+
+/* Total */
+
+.coordination-summary-table tfoot td {
+    font-weight: 700;
+
+    background: #f1f3f6;
+
+    border-top: 2px solid #9ca3af;
+}
+
+.coordination-summary-table tfoot .received-cell {
+    background: #dcfce7;
+}
+
+.coordination-summary-table .global-total {
+    text-align: right;
+    font-size: 14px;
+}
+
+/* Última columna sin borde derecho */
+
+.coordination-summary-table th:last-child,
+.coordination-summary-table td:last-child {
+    border-right: none;
+}
+
+/* Última fila sin borde inferior */
+
+.coordination-summary-table tfoot tr:last-child td {
+    border-bottom: none;
+}
+
+/* =========================================================
+   RESUMEN DE COORDINACIÓN
+   ========================================================= */
+
+.coordination-summary-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.coordination-summary-table {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.coordination-summary-table th,
+.coordination-summary-table td {
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Cliente */
+.coordination-summary-table th:first-child,
+.coordination-summary-table td:first-child {
+    width: 35%;
+    text-align: left;
+}
+
+/* Columnas numéricas */
+.coordination-summary-table th:not(:first-child),
+.coordination-summary-table td:not(:first-child) {
+    width: 45.00%;
+}
+
+@media (max-width: 768px) {
+
+    .coordination-summary-table-wrapper {
+        overflow-x: auto;
+        overflow-y: hidden;
+        width: 100%;
+    }
+
+    .coordination-summary-table {
+        min-width: 850px;
+        width: 850px;
+        table-layout: fixed;
+    }
+
+    .coordination-summary-table th,
+    .coordination-summary-table td {
+        font-size: 14px;
+        padding: 10px 8px;
+    }
+
+    .coordination-summary-table th:first-child,
+    .coordination-summary-table td:first-child {
+        width: 180px;
+        min-width: 180px;
+    }
+
+    .coordination-summary-table th:not(:first-child),
+    .coordination-summary-table td:not(:first-child) {
+        width: 35.00%;
+        min-width: 67px;
+    }
+}

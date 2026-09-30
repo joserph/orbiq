@@ -48,17 +48,49 @@ class FlightCoordinations extends Page implements HasTable
 
     //     $this->afterActionCalledFromRecord($action);
     // }
-    
+    public string $search = '';
+
+    // public function getCoordinations()
+    // {
+    //     return \App\Models\FlightCoordination::query()
+    //         ->with([
+    //             'client',
+    //             'farm',
+    //             'marketer',
+    //         ])
+    //         ->where('flight_id', $this->record->id)
+    //         ->orderBy(
+    //             Farm::select('name')
+    //                 ->whereColumn('farms.id', 'flight_coordinations.farm_id')
+    //         )
+    //         ->get();
+    // }
 
     public function getCoordinations()
     {
-        return \App\Models\FlightCoordination::query()
+        $query = \App\Models\FlightCoordination::query()
             ->with([
                 'client',
                 'farm',
                 'marketer',
             ])
-            ->where('flight_id', $this->record->id)
+            ->where('flight_id', $this->record->id);
+
+        if (filled($this->search)) {
+            $search = '%' . $this->search . '%';
+
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('farm', function ($farmQuery) use ($search) {
+                    $farmQuery->where('name', 'like', $search);
+                })
+                ->orWhere('hawb', 'like', $search)
+                ->orWhereHas('client', function ($clientQuery) use ($search) {
+                    $clientQuery->where('name', 'like', $search);
+                });
+            });
+        }
+
+        return $query
             ->orderBy(
                 Farm::select('name')
                     ->whereColumn('farms.id', 'flight_coordinations.farm_id')
@@ -66,10 +98,18 @@ class FlightCoordinations extends Page implements HasTable
             ->get();
     }
 
+    // public function getCoordinationsByClient()
+    // {
+    //     return $this->getCoordinations()
+    //         ->groupBy('client_id');
+    // }
     public function getCoordinationsByClient()
     {
         return $this->getCoordinations()
-            ->groupBy('client_id');
+            ->groupBy('client_id')
+            ->sortBy(function ($coordinations) {
+                return $coordinations->first()->client->name ?? '';
+            });
     }
 
     // protected function getEditCoordinationAction(): \Filament\Actions\Action
@@ -286,6 +326,101 @@ class FlightCoordinations extends Page implements HasTable
                 $coordination->update($data);
             });
     }
+
+
+    public function deleteCoordinationAction(): \Filament\Actions\Action
+    {
+        return \Filament\Actions\Action::make('deleteCoordination')
+            ->label('Eliminar')
+            ->icon('heroicon-o-trash')
+            ->color('danger')
+            ->requiresConfirmation()
+            ->modalHeading('Eliminar coordinación')
+            ->modalDescription('¿Estás seguro de que deseas eliminar esta coordinación? Esta acción no se puede deshacer.')
+            ->modalSubmitActionLabel('Sí, eliminar')
+            ->modalCancelActionLabel('Cancelar')
+            ->action(function (array $arguments): void {
+
+                $coordination = FlightCoordination::findOrFail(
+                    $arguments['coordination']
+                );
+
+                $coordination->delete();
+
+                \Filament\Notifications\Notification::make()
+                    ->title('Coordinación eliminada')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    // public function getCoordinationSummary()
+    // {
+    //     return $this->getCoordinationsByClient()
+    //         ->map(function ($coordinations) {
+
+    //             return [
+    //                 'client' => $coordinations->first()?->client?->name ?? 'CLIENTE SIN NOMBRE',
+
+    //                 'coordinated' => [
+    //                     'pieces' => $coordinations->sum('pieces'),
+    //                     'fb'     => $coordinations->sum('fb'),
+    //                     'hb'     => $coordinations->sum('hb'),
+    //                     'qb'     => $coordinations->sum('qb'),
+    //                     'eb'     => $coordinations->sum('eb'),
+    //                     'db'     => $coordinations->sum('db'),
+    //                     'fulls'  => $coordinations->sum('fulls'),
+    //                 ],
+
+    //                 'received' => [
+    //                     'pieces' => $coordinations->sum('pieces_r'),
+    //                     'fb'     => $coordinations->sum('fb_r'),
+    //                     'hb'     => $coordinations->sum('hb_r'),
+    //                     'qb'     => $coordinations->sum('qb_r'),
+    //                     'eb'     => $coordinations->sum('eb_r'),
+    //                     'db'     => $coordinations->sum('db_r'),
+    //                     'fulls'  => $coordinations->sum('fulls_r'),
+    //                 ],
+    //             ];
+    //         });
+    // }
+    
+    public function getCoordinationSummary()
+    {
+        return $this->getCoordinationsByClient()
+            ->map(function ($coordinations) {
+
+                $client = $coordinations->first()?->client;
+
+                return [
+                    'client' => $client?->name ?? 'CLIENTE SIN NOMBRE',
+
+                    'coordinated' => [
+                        'pieces' => $coordinations->sum('pieces'),
+                        'fb'     => $coordinations->sum('fb'),
+                        'hb'     => $coordinations->sum('hb'),
+                        'qb'     => $coordinations->sum('qb'),
+                        'eb'     => $coordinations->sum('eb'),
+                        'db'     => $coordinations->sum('db'),
+                        'fulls'  => $coordinations->sum('fulls'),
+                    ],
+
+                    'received' => [
+                        'pieces' => $coordinations->sum('pieces_r'),
+                        'fb'     => $coordinations->sum('fb_r'),
+                        'hb'     => $coordinations->sum('hb_r'),
+                        'qb'     => $coordinations->sum('qb_r'),
+                        'eb'     => $coordinations->sum('eb_r'),
+                        'db'     => $coordinations->sum('db_r'),
+                        'fulls'  => $coordinations->sum('fulls_r'),
+                    ],
+                ];
+            })
+            ->values();
+    }
+
+
+
 
     public function table(Table $table): Table
     {
