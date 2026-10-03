@@ -83,9 +83,9 @@
                         $client = $coordinations->first()?->client;
 
                         $gridColumns = [
-                            '190px',
+                            '270px',
                             '105px',
-                            'minmax(150px, 1fr)',
+                            'minmax(100px, 1fr)',
                             '50px',
                         ];
 
@@ -103,7 +103,7 @@
                         $gridColumns[] = '50px';
                         $gridColumns[] = '75px';
                         $gridColumns[] = '50px';
-                        $gridColumns[] = '140px';
+                        $gridColumns[] = '110px';
                         $gridColumns[] = '90px';
 
                         $gridTemplate = implode(' ', $gridColumns);
@@ -154,7 +154,7 @@
                                         ->implode(', ');
                                 @endphp
                                 <!-- INFORMATION -->
-                                <div class="flight-cell text">{{ $coordination->farm?->name }}</div>
+                                <div class="flight-cell text-farm">{{ $coordination->farm?->name }}</div>
                                 <div class="flight-cell text">{{ $coordination->hawb }}</div>
                                 <div class="flight-cell text">{{ $varieties }}</div>
                                 <!-- COORDINATED -->

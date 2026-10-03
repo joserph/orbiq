@@ -169,6 +169,11 @@
 
     .flight-cell.text {
         overflow-wrap: anywhere;
+        justify-content: center;
+    }
+    .flight-cell.text-farm {
+        overflow-wrap: anywhere;
+        justify-content: normal;
     }
 
     .flight-cell.number {
@@ -1250,4 +1255,8 @@
         width: 35.00%;
         min-width: 67px;
     }
+}
+
+.mi-seccion-compacta > section > header {
+    padding: 0.5rem 1rem !important;
 }
