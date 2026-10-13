@@ -39,6 +39,13 @@
                     {{ $this->record->arrival_date?->format('d/m/Y') ?? '—' }}
                 </span>
             </div>
+            {{-- LOGISTICS COMPANY --}}
+            <div class="flight-summary-item">
+                <span class="flight-summary-label">Logistics Company</span>
+                <span class="flight-summary-value">
+                    {{ $this->record->logisticsCompany?->name ?? '—' }}
+                </span>
+            </div>
 
             {{-- RUTA --}}
             <div class="flight-summary-route">

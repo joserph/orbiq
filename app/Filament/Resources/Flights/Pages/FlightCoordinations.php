@@ -18,6 +18,7 @@ use Filament\Tables\Columns\Summarizers\Sum;
 use App\Filament\Resources\Flights\Actions\CreateFlightCoordinationAction;
 use App\Filament\Resources\Flights\Actions\EditFlightCoordinationAction;
 use App\Filament\Resources\Flights\Actions\DeleteFlightCoordinationAction;
+use App\Models\Client;
 use App\Models\Company;
 use App\Reports\FlightCompletePdf;
 use Filament\Actions\Action;
@@ -35,6 +36,7 @@ class FlightCoordinations extends Page implements HasTable
     public function mount(int | string $record): void
     {
         $this->record = $this->resolveRecord($record);
+        // dd($this->record);
     }
 
     public string $search = '';
@@ -62,7 +64,7 @@ class FlightCoordinations extends Page implements HasTable
                 });
             });
         }
-
+        // dd($query);
         return $query
             ->orderBy(
                 Farm::select('name')
@@ -253,6 +255,20 @@ class FlightCoordinations extends Page implements HasTable
             ]);
     }
 
+    public function getClientsForReport(): array
+    {
+        return Client::query()
+            ->whereIn(
+                'id',
+                $this->record->coordinations()
+                    ->select('client_id')
+                    ->distinct()
+            )
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
     protected function getHeaderActions(): array
     {
         // $company = Company::first();
@@ -266,6 +282,38 @@ class FlightCoordinations extends Page implements HasTable
                     // 'company' => $company,
                 ]))
                 ->openUrlInNewTab(),
+            
+            Action::make('completeExcel')
+                ->label('Excel completo')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('success')
+                ->url(fn () => route(
+                    'reports.flight.complete.excel',
+                    ['flight' => $this->record->id]
+                ))
+                ->openUrlInNewTab(),
+            
+            Action::make('clientPdf')
+                ->label('PDF por cliente')
+                ->icon('heroicon-o-document-text')
+                ->color('info')
+                ->form([
+                    \Filament\Forms\Components\Select::make('client_id')
+                        ->label('Cliente')
+                        ->options(fn () => $this->getClientsForReport())
+                        ->required()
+                        ->searchable(),
+                ])
+                ->action(function (array $data) {
+                    $url = route('reports.flight.client.pdf', [
+                        'flight' => $this->record->id,
+                        'client' => $data['client_id'],
+                    ]);
+
+                    $this->js("window.open(" . \Illuminate\Support\Js::from($url) . ", '_blank')");
+                }),
+
+
         ];
     }
 }
