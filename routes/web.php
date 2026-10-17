@@ -1,5 +1,6 @@
 <?php
 
+use App\Exports\FlightClientExport;
 use App\Exports\FlightCompleteExport;
 use App\Models\Company;
 use App\Models\Flight;
@@ -37,3 +38,20 @@ Route::get('/reports/flights/{flight}/clients/{client}/pdf', function (
 
     return FlightClientPdf::stream($flight, $client);
 })->name('reports.flight.client.pdf');
+
+
+Route::get('/reports/flights/{flight}/clients/{client}/excel', function (
+    \App\Models\Flight $flight,
+    \App\Models\Client $client
+) {
+    abort_unless(
+        $flight->coordinations()
+            ->where('client_id', $client->id)
+            ->exists(),
+        404
+    );
+
+    return (new FlightClientExport($flight, $client))->download();
+
+})->name('reports.flight.client.excel');
+

@@ -313,6 +313,30 @@ class FlightCoordinations extends Page implements HasTable
                     $this->js("window.open(" . \Illuminate\Support\Js::from($url) . ", '_blank')");
                 }),
 
+            
+            Action::make('clientExcel')
+                ->label('Excel por cliente')
+                ->icon('heroicon-o-table-cells')
+                ->color('success')
+                ->form([
+                    \Filament\Forms\Components\Select::make('client_id')
+                        ->label('Cliente')
+                        ->options(fn () => $this->getClientsForReport())
+                        ->required()
+                        ->searchable(),
+                ])
+                ->action(function (array $data) {
+                    $url = route('reports.flight.client.excel', [
+                        'flight' => $this->record->id,
+                        'client' => $data['client_id'],
+                    ]);
+
+                    $this->js(
+                        "window.open(" . \Illuminate\Support\Js::from($url) . ", '_blank')"
+                    );
+                }),
+
+
 
         ];
     }

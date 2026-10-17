@@ -35,24 +35,36 @@ class FlightCompleteExport
         $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(18);
         $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(43);
         $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(16);
-        $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('K')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('L')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('M')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('N')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('O')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('P')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('Q')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('R')->setWidth(10);
-        $spreadsheet->getActiveSheet()->getColumnDimension('S')->setWidth(12);
-        $spreadsheet->getActiveSheet()->getColumnDimension('T')->setWidth(14);
-        $spreadsheet->getActiveSheet()->getColumnDimension('U')->setWidth(25);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(10);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(10);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(10);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(10);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(10);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(10);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('K')->setWidth(10);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('L')->setWidth(10);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('M')->setWidth(10);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('N')->setWidth(10);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('O')->setWidth(10);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('P')->setWidth(10);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('Q')->setWidth(10);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('R')->setWidth(10);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('S')->setWidth(12);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('T')->setWidth(14);
+        // $spreadsheet->getActiveSheet()->getColumnDimension('U')->setWidth(25);
         // $spreadsheet->getActiveSheet()->getRowDimension('8')->setRowHeight(30);
+
+        $activeBoxes = collect([
+            'fb' => $this->flight->fb_status,
+            'hb' => $this->flight->hb_status,
+            'qb' => $this->flight->qb_status,
+            'eb' => $this->flight->eb_status,
+            'db' => $this->flight->db_status,
+        ])
+            ->filter()
+            ->keys()
+            ->values()
+            ->all();
 
         /*
         |--------------------------------------------------------------------------
@@ -72,9 +84,12 @@ class FlightCompleteExport
         $sub_space = count($groups) * 2;
         $total_line = 12;
         $line_final = count($coordinations) + count($groups) + $sub_space + $total_line + 3;
+        
         // dd($line_final);
         $letra = 'A';
-        for($letra; $letra <= 'V'; $letra++)
+        $column_final = chr(ord($letra) + 11 + (count($activeBoxes) * 2));
+        // dd($column_final);
+        for($letra; $letra <= "{$column_final}"; $letra++)
         {
             $spreadsheet->getActiveSheet()->getStyle($letra . '1:' . $letra . $line_final)->getFill()->setFillType(Fill::FILL_SOLID)
             ->getStartColor()->setRGB('FFFFFF');
@@ -90,7 +105,7 @@ class FlightCompleteExport
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,
-                    'color' => ['rgb' => 'B7C0CE'],
+                    'color' => ['rgb' => 'B7C7D8'],
                 ],
             ],
         ];
@@ -150,10 +165,10 @@ class FlightCompleteExport
         |--------------------------------------------------------------------------
         */
 
-        $sheet->mergeCells('F2:H4');
+        $sheet->mergeCells('D2:H4');
 
         $sheet->setCellValue(
-            'F2',
+            'D2',
             'COORDINACIONES AÉREAS'
         );
 
@@ -168,14 +183,14 @@ class FlightCompleteExport
             ],
         ])->getAlignment()->setWrapText(true);
 
-        $sheet->mergeCells('D5:J6');
+        $sheet->mergeCells('D5:H6');
 
         $sheet->setCellValue(
             'D5',
             'CONTROL Y SEGUIMIENTO DE CARGA AÉREA'
         );
 
-        $sheet->getStyle('D5:J6')->applyFromArray([
+        $sheet->getStyle('D5:H6')->applyFromArray([
             'font' => [
                 'bold' => true,
                 'size' => 14,
@@ -201,7 +216,7 @@ class FlightCompleteExport
             ],
             'fill' => [
                 'fillType' => Fill::FILL_SOLID,
-                'color' => ['rgb' => '34226A'],
+                'color' => ['rgb' => '24435F'],
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_LEFT,
@@ -216,87 +231,85 @@ class FlightCompleteExport
             ],
         ];
 
-        
-
         // AWB
+        $sheet->mergeCells('I3:J3');
+        $sheet->mergeCells('I4:J4');
+
+        $sheet->setCellValue('I3', 'AWB');
+        $sheet->setCellValue('I4', $this->flight->awb ?? '—');
+
+        // AIRLINE
         $sheet->mergeCells('K3:M3');
         $sheet->mergeCells('K4:M4');
 
-        $sheet->setCellValue('K3', 'AWB');
-        $sheet->setCellValue('K4', $this->flight->awb ?? '—');
-
-        // AIRLINE
-        $sheet->mergeCells('N3:Q3');
-        $sheet->mergeCells('N4:Q4');
-
         $sheet->setCellValue(
-            'N3',
+            'K3',
             'AIRLINE'
         );
 
         $sheet->setCellValue(
-            'N4',
+            'K4',
             $this->flight->airline?->name ?? '—'
         );
 
         // FLIGHT DATE
-        $sheet->mergeCells('R3:S3');
-        $sheet->mergeCells('R4:S4');
+        $sheet->mergeCells('N3:O3');
+        $sheet->mergeCells('N4:O4');
 
         $sheet->setCellValue(
-            'R3',
+            'N3',
             'FLIGHT DATE'
         );
 
         $sheet->setCellValue(
-            'R4',
+            'N4',
             $this->flight->date?->format('d/m/Y') ?? '—'
         );
 
         // ARRIVAL DATE
-        // $sheet->mergeCells('H4:I4');
-        // $sheet->mergeCells('H5:I5');
+        $sheet->mergeCells('P3:Q3');
+        $sheet->mergeCells('P4:Q4');
 
         $sheet->setCellValue(
-            'T3',
+            'P3',
             'ARRIVAL DATE'
         );
 
         $sheet->setCellValue(
-            'T4',
+            'P4',
             $this->flight->arrival_date?->format('d/m/Y') ?? '—'
         );
 
-        $sheet->mergeCells('K5:R5'); //#34226a color base
+        $sheet->mergeCells('I5:P5'); //#34226a color base
         // $sheet->setCellValue('K2', 'INFORMACIÓN DEL VUELO');
-        $sheet->getStyle('K5:R5')
+        $sheet->getStyle('I5:P5')
             ->applyFromArray($infoStyle);
 
         // ORIGIN
-        $sheet->mergeCells('K6:N6');
-        $sheet->mergeCells('K7:N7');
+        $sheet->mergeCells('I6:L6');
+        $sheet->mergeCells('I7:L7');
 
         $sheet->setCellValue(
-            'K6',
+            'I6',
             'ORIGIN'
         );
 
         $sheet->setCellValue(
-            'K7',
+            'I7',
             $this->flight->originCity?->name ?? '—'
         );
 
         // DESTINATION
-        $sheet->mergeCells('O6:R6');
-        $sheet->mergeCells('O7:R7');
+        $sheet->mergeCells('M6:P6');
+        $sheet->mergeCells('M7:P7');
 
         $sheet->setCellValue(
-            'O6',
+            'M6',
             'DESTINATION'
         );
 
         $sheet->setCellValue(
-            'O7',
+            'M7',
             $this->flight->destinationCity?->name ?? '—'
         );
 
@@ -307,14 +320,14 @@ class FlightCompleteExport
         */
 
         $flightInfoRanges = [
-            'K2:T2',
+            'I2:Q2',
+            'I3:J4',
             'K3:M4',
-            'N3:Q4',
-            'R3:S4',
-            'T3:T4',
-            'K5:R5',
-            'K6:N7',
-            'O6:R7',
+            'N3:O4',
+            'P3:Q4',
+            'I5:P5',
+            'I6:L7',
+            'M6:P7',
         ];
 
         foreach ($flightInfoRanges as $range) {
@@ -323,14 +336,14 @@ class FlightCompleteExport
 
         // Labels
         foreach ([
-            'K2',
+            'I2',
+            'I3',
             'K3',
             'N3',
-            'R3',
-            'T3',
-            'K5',
-            'K6',
-            'O6',
+            'P3',
+            'I5',
+            'I6',
+            'M6',
         ] as $cell) {
             $sheet->getStyle($cell)->getFont()->setSize(10);
             $sheet->getStyle($cell)->getFont()->setBold(false);
@@ -339,34 +352,34 @@ class FlightCompleteExport
 
         // Values
         foreach ([
+            'I4',
             'K4',
             'N4',
-            'R4',
-            'T4',
-            'K7',
-            'O7',
+            'P4',
+            'I7',
+            'M7',
         ] as $cell) {
             $sheet->getStyle($cell)->getFont()->setSize(13);
             $sheet->getStyle($cell)->getFont()->setBold(true);
         }
 
         // Vertical alignment
-        $sheet->getStyle('K2:R7')
+        $sheet->getStyle('I2:Q7')
             ->getAlignment()
             ->setVertical(Alignment::VERTICAL_CENTER);
 
-        $sheet->mergeCells('K2:T2'); //#34226a color base
-        $sheet->setCellValue('K2', 'INFORMACIÓN DEL VUELO');
-        $sheet->getStyle('K2:T2')
+        $sheet->mergeCells('I2:Q2'); //#34226a color base
+        $sheet->setCellValue('I2', 'INFORMACIÓN DEL VUELO');
+        $sheet->getStyle('I2:Q2')
             ->applyFromArray($infoStyle);
 
-        $sheet->mergeCells('D8:J9');
+        $sheet->mergeCells('D8:H9');
         $sheet->setCellValue('D8', 'REPORTE DE COORDINACIÓN');
 
-        $sheet->mergeCells('S9:T9');
-        $sheet->setCellValue('S9', 'DOCUMENTO OPERATIVO');
+        $sheet->mergeCells('P9:Q9');
+        $sheet->setCellValue('P9', 'DOCUMENTO OPERATIVO');
 
-        $sheet->getStyle('D8:J9')->applyFromArray([
+        $sheet->getStyle('D8:H9')->applyFromArray([
             'font' => [
                 'bold' => true,
                 'size' => 14,
@@ -377,7 +390,7 @@ class FlightCompleteExport
             ],
         ]);
 
-        $sheet->getStyle('S9:T9')->applyFromArray([
+        $sheet->getStyle('P9:Q9')->applyFromArray([
             'font' => [
                 'bold' => true,
                 'size' => 11,
@@ -416,6 +429,15 @@ class FlightCompleteExport
         |--------------------------------------------------------------------------
         */
 
+        // $activeBoxes = collect([
+        //     'fb' => $this->flight->fb_status,
+        //     'hb' => $this->flight->hb_status,
+        //     'qb' => $this->flight->qb_status,
+        //     'eb' => $this->flight->eb_status,
+        //     'db' => $this->flight->db_status,
+        // ])
+            
+        //     ->all();
         $activeBoxes = collect([
             'fb' => $this->flight->fb_status,
             'hb' => $this->flight->hb_status,
@@ -423,9 +445,11 @@ class FlightCompleteExport
             'eb' => $this->flight->eb_status,
             'db' => $this->flight->db_status,
         ])
-            
+            ->filter()
+            ->keys()
+            ->values()
             ->all();
-        // dd($activeBoxes);
+        // dd( count($activeBoxes));
 
         $nextRow = $row + 1;
 
@@ -434,78 +458,6 @@ class FlightCompleteExport
         | HAWB / FARM / VARIETY
         |--------------------------------------------------------------------------
         */
-        $sheet->mergeCells("B{$row}:B{$nextRow}");
-        $sheet->setCellValue("B{$row}", 'HAWB');
-
-        $sheet->mergeCells("C{$row}:C{$nextRow}");
-        $sheet->setCellValue("C{$row}", 'FARM');
-
-        $sheet->mergeCells("D{$row}:D{$nextRow}");
-        $sheet->setCellValue("D{$row}", 'VARIETY');
-
-        // $sheet->mergeCells("B{$row}:D{$nextRow}");
-        // $sheet->setCellValue("B{$row}", '');
-
-        $sheet->mergeCells("E{$row}:K{$row}");
-        $sheet->setCellValue("E{$row}", 'COORDINATED');
-
-        $sheet->mergeCells("L{$row}:R{$row}");
-        $sheet->setCellValue("L{$row}", 'RECEIVED');
-
-        $sheet->mergeCells("S{$row}:S{$nextRow}");
-        $sheet->setCellValue("S{$row}", 'RETURNS');
-
-        $sheet->mergeCells("T{$row}:T{$nextRow}");
-        $sheet->setCellValue("T{$row}", 'MISSING');
-
-        $sheet->mergeCells("U{$row}:U{$nextRow}");
-        $sheet->setCellValue("U{$row}", 'OBSERVATIONS');
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | SECOND HEADER ROW
-        |--------------------------------------------------------------------------
-        */
-
-        $sheet->setCellValue("E" . ($row + 1), 'FB');
-        $sheet->setCellValue("F" . ($row + 1), 'HB');
-        $sheet->setCellValue("G" . ($row + 1), 'QB');
-        $sheet->setCellValue("H" . ($row + 1), 'EB');
-        $sheet->setCellValue("I" . ($row + 1), 'DB');
-        $sheet->setCellValue("J" . ($row + 1), 'PIECES');
-        $sheet->setCellValue("K" . ($row + 1), 'FULLS');
-
-        $sheet->setCellValue("L" . ($row + 1), 'FB');
-        $sheet->setCellValue("M" . ($row + 1), 'HB');
-        $sheet->setCellValue("N" . ($row + 1), 'QB');
-        $sheet->setCellValue("O" . ($row + 1), 'EB');
-        $sheet->setCellValue("P" . ($row + 1), 'DB');
-        $sheet->setCellValue("Q" . ($row + 1), 'PIECES');
-        $sheet->setCellValue("R" . ($row + 1), 'FULLS');
-
-        $sheet->getColumnDimension('E')->setVisible($this->flight->fb_status);
-        $sheet->getColumnDimension('F')->setVisible($this->flight->hb_status);
-        $sheet->getColumnDimension('G')->setVisible($this->flight->qb_status);
-        $sheet->getColumnDimension('H')->setVisible($this->flight->eb_status);
-        $sheet->getColumnDimension('I')->setVisible($this->flight->db_status);
-
-        $sheet->getColumnDimension('L')->setVisible($this->flight->fb_status);
-        $sheet->getColumnDimension('M')->setVisible($this->flight->hb_status);
-        $sheet->getColumnDimension('N')->setVisible($this->flight->qb_status);
-        $sheet->getColumnDimension('O')->setVisible($this->flight->eb_status);
-        $sheet->getColumnDimension('P')->setVisible($this->flight->db_status);
-
-
-       
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | HEADER STYLE
-        |--------------------------------------------------------------------------
-        */
-
         $headerStyle = [
             'font' => [
                 'bold' => true,
@@ -514,7 +466,30 @@ class FlightCompleteExport
             ],
             'fill' => [
                 'fillType' => Fill::FILL_SOLID,
-                'color' => ['rgb' => '34226A'], // 34226A - 172033
+                'color' => ['rgb' => '24435F'], // 34226A - 172033
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => 'FFFFFF'],
+                ],
+            ],
+        ];
+        // Estilo celda coordinadas
+        $headerStyle_c = [
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => 'FFFFFF'],
+                'size' => 10,
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'color' => ['rgb' => '247FB8'], // 34226A - 172033
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -529,9 +504,192 @@ class FlightCompleteExport
             ],
         ];
 
-        $sheet->getStyle("B{$row}:U" . ($row + 1))
+
+        $sheet->mergeCells("B{$row}:B{$nextRow}");
+        $sheet->setCellValue("B{$row}", 'HAWB');
+
+        $sheet->mergeCells("C{$row}:C{$nextRow}");
+        $sheet->setCellValue("C{$row}", 'FARM');
+
+        $sheet->mergeCells("D{$row}:D{$nextRow}");
+        $sheet->setCellValue("D{$row}", 'VARIETY');
+        
+
+        // $sheet->mergeCells("B{$row}:D{$nextRow}");
+        // $sheet->setCellValue("B{$row}", '');
+        $columnHeader = 'E';
+        $nextColumnHeader = chr(ord($columnHeader) + 1 + count($activeBoxes));
+        // dd($row);
+        
+        $sheet->mergeCells("{$columnHeader}{$row}:{$nextColumnHeader}{$row}");
+        $sheet->setCellValue("E{$row}", 'COORDINATED');
+        
+        $columnHeader = chr(ord($nextColumnHeader) + 1);
+        $nextColumnHeader = chr(ord($columnHeader) + 1 + count($activeBoxes));
+        // dd($nextColumnHeader);
+        $sheet->mergeCells("{$columnHeader}{$row}:{$nextColumnHeader}{$row}");
+        $sheet->setCellValue("{$columnHeader}{$row}", 'RECEIVED');
+        // dd($columnHeader);
+        $columnHeader = chr(ord($nextColumnHeader) + 1);
+        $sheet->mergeCells("{$columnHeader}{$row}:{$columnHeader}{$nextRow}");
+        $sheet->setCellValue("{$columnHeader}{$row}", 'RETURNS');
+
+        $columnHeader++;
+        $sheet->mergeCells("{$columnHeader}{$row}:{$columnHeader}{$nextRow}");
+        $sheet->setCellValue("{$columnHeader}{$row}", 'MISSING');
+
+        $columnHeader++;
+        $sheet->mergeCells("{$columnHeader}{$row}:{$columnHeader}{$nextRow}");
+        $sheet->setCellValue("{$columnHeader}{$row}", 'OBSERVATIONS');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SECOND HEADER ROW
+        |--------------------------------------------------------------------------
+        */
+        // dd($column);
+        $sheet->getStyle("B{$row}:D" . ($row + 1))
             ->applyFromArray($headerStyle);
 
+        $column = 'E';
+        
+        $rowH = $row + 1;
+        // Cajas coordinadas.
+        foreach ($activeBoxes as $box) {
+            $spreadsheet->getActiveSheet()->getColumnDimension("{$column}")->setWidth(8);
+            $sheet->setCellValue(
+                "{$column}{$rowH}",
+                strtoupper($box)
+            );
+
+            $column++;
+        }
+        $spreadsheet->getActiveSheet()->getColumnDimension("{$column}")->setWidth(8);
+        $sheet->setCellValue("{$column}{$rowH}", 'PIECES');
+        $column++;
+        $spreadsheet->getActiveSheet()->getColumnDimension("{$column}")->setWidth(11);
+        $sheet->setCellValue("{$column}{$rowH}", 'FULLS');
+        // dd($column);
+        $sheet->getStyle("E{$row}:{$column}" . ($row + 1))
+            ->applyFromArray($headerStyle_c);
+        $column++;
+        // $sheet->setCellValue("E" . ($row + 1), 'FB');
+        // $sheet->setCellValue("F" . ($row + 1), 'HB');
+        // $sheet->setCellValue("G" . ($row + 1), 'QB');
+        // $sheet->setCellValue("H" . ($row + 1), 'EB');
+        // $sheet->setCellValue("I" . ($row + 1), 'DB');
+        // $sheet->setCellValue("J" . ($row + 1), 'PIECES');
+        // $sheet->setCellValue("K" . ($row + 1), 'FULLS');
+        $column_r = $column;
+        // Cajas rcibidas.
+        foreach ($activeBoxes as $box) {
+            $spreadsheet->getActiveSheet()->getColumnDimension("{$column}")->setWidth(8);
+            $sheet->setCellValue(
+                "{$column}{$rowH}",
+                strtoupper($box) . '_R'
+            );
+
+            $column++;
+        }
+        $spreadsheet->getActiveSheet()->getColumnDimension("{$column}")->setWidth(8);
+        $sheet->setCellValue("{$column}{$rowH}", 'PIECES_R');
+        $column++;
+        $spreadsheet->getActiveSheet()->getColumnDimension("{$column}")->setWidth(11);
+        $sheet->setCellValue("{$column}{$rowH}", 'FULLS_R');
+
+        $headerStyle_r = [
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => '000000'],
+                'size' => 10,
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'color' => ['rgb' => 'FFB800'], // 34226A - 172033
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => 'FFFFFF'],
+                ],
+            ],
+        ];
+        $sheet->getStyle("{$column_r}{$row}:{$column}" . ($row + 1))
+            ->applyFromArray($headerStyle_r);
+
+        $column++;
+        $column_o = $column;
+        $spreadsheet->getActiveSheet()->getColumnDimension("{$column}")->setWidth(8);
+        $column++;
+        $spreadsheet->getActiveSheet()->getColumnDimension("{$column}")->setWidth(8);
+        $column++;
+        $spreadsheet->getActiveSheet()->getColumnDimension("{$column}")->setWidth(30);
+
+        $sheet->getStyle("{$column_o}{$row}:{$column}" . ($row + 1))
+            ->applyFromArray($headerStyle);
+        // $column++; // FINAL DE LA TABLA
+        // $column = chr(ord($column) + 3); 
+        // $sheet->setCellValue("L" . ($row + 1), 'FB');
+        // $sheet->setCellValue("M" . ($row + 1), 'HB');
+        // $sheet->setCellValue("N" . ($row + 1), 'QB');
+        // $sheet->setCellValue("O" . ($row + 1), 'EB');
+        // $sheet->setCellValue("P" . ($row + 1), 'DB');
+        // $sheet->setCellValue("Q" . ($row + 1), 'PIECES');
+        // $sheet->setCellValue("R" . ($row + 1), 'FULLS');
+
+        // $sheet->getColumnDimension('E')->setVisible($this->flight->fb_status);
+        // $sheet->getColumnDimension('F')->setVisible($this->flight->hb_status);
+        // $sheet->getColumnDimension('G')->setVisible($this->flight->qb_status);
+        // $sheet->getColumnDimension('H')->setVisible($this->flight->eb_status);
+        // $sheet->getColumnDimension('I')->setVisible($this->flight->db_status);
+
+        // $sheet->getColumnDimension('L')->setVisible($this->flight->fb_status);
+        // $sheet->getColumnDimension('M')->setVisible($this->flight->hb_status);
+        // $sheet->getColumnDimension('N')->setVisible($this->flight->qb_status);
+        // $sheet->getColumnDimension('O')->setVisible($this->flight->eb_status);
+        // $sheet->getColumnDimension('P')->setVisible($this->flight->db_status);
+
+
+       
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HEADER STYLE
+        |--------------------------------------------------------------------------
+        */
+
+        // $headerStyle = [
+        //     'font' => [
+        //         'bold' => true,
+        //         'color' => ['rgb' => 'FFFFFF'],
+        //         'size' => 10,
+        //     ],
+        //     'fill' => [
+        //         'fillType' => Fill::FILL_SOLID,
+        //         'color' => ['rgb' => '34226A'], // 34226A - 172033
+        //     ],
+        //     'alignment' => [
+        //         'horizontal' => Alignment::HORIZONTAL_CENTER,
+        //         'vertical' => Alignment::VERTICAL_CENTER,
+        //         'wrapText' => true,
+        //     ],
+        //     'borders' => [
+        //         'allBorders' => [
+        //             'borderStyle' => Border::BORDER_THIN,
+        //             'color' => ['rgb' => 'FFFFFF'],
+        //         ],
+        //     ],
+        // ];
+        // dd($column);
+        
+        // dd($row);
         $sheet->getRowDimension($row)->setRowHeight(25);
         $sheet->getRowDimension($row + 1)->setRowHeight(25);
 
@@ -599,18 +757,21 @@ class FlightCompleteExport
                 ],
             ];
 
-            $sheet->mergeCells("C{$row}:U{$row}");
-
+            
+            $sheet->mergeCells("B{$row}:C{$row}");
             $sheet->setCellValue(
                 "B{$row}",
                 'CLIENT:'
             );
+            $sheet->mergeCells("D{$row}:{$column}{$row}");
+            $row_client = $row;
+            $sheet->getRowDimension($row)->setRowHeight(25);
             $sheet->setCellValue(
-                "C{$row}",
+                "D{$row}",
                 $clientName
             );
 
-            $sheet->getStyle("C{$row}:U{$row}")
+            $sheet->getStyle("C{$row}:{$column}{$row}")
                 ->applyFromArray($clientStyle);
 
             $sheet->getStyle("B{$row}")->applyFromArray([
@@ -704,6 +865,8 @@ class FlightCompleteExport
                 |--------------------------------------------------------------------------
                 */
 
+                
+
                 $fb = (int) ($coordination->fb ?? 0);
                 $hb = (int) ($coordination->hb ?? 0);
                 $qb = (int) ($coordination->qb ?? 0);
@@ -743,28 +906,52 @@ class FlightCompleteExport
                     "D{$row}",
                     strtoupper($varieties)
                 );
+                $column = 'E';
+                // Cajas coordinadas.
+                foreach ($activeBoxes as $box) {
+                    $sheet->setCellValue(
+                        "{$column}{$row}",
+                        (int) $coordination->{$box} ?? 0
+                    );
 
+                    $column++;
+                }
                 // Coordinated
-                $sheet->setCellValue("E{$row}", $fb);
-                $sheet->setCellValue("F{$row}", $hb);
-                $sheet->setCellValue("G{$row}", $qb);
-                $sheet->setCellValue("H{$row}", $eb);
-                $sheet->setCellValue("I{$row}", $db);
-                $sheet->setCellValue("J{$row}", $pieces);
-                $sheet->setCellValue("K{$row}", $fulls);
+                // $sheet->setCellValue("E{$row}", $fb);
+                // $sheet->setCellValue("F{$row}", $hb);
+                // $sheet->setCellValue("G{$row}", $qb);
+                // $sheet->setCellValue("H{$row}", $eb);
+                // $sheet->setCellValue("I{$row}", $db);
+                $sheet->setCellValue("{$column}{$row}", $pieces);
+                $column++;
+                $sheet->setCellValue("{$column}{$row}", $fulls);
+                $column++;
+                // Cajas recibidas.
+                foreach ($activeBoxes as $box) {
+                    $receivedField = $box . '_r';
+                    // dd($receivedField);
+                    $sheet->setCellValue(
+                        "{$column}{$row}",
+                        $coordination->{$receivedField} ?? 0
+                    );
 
+                    $column++;
+                }
                 // Received
-                $sheet->setCellValue("L{$row}", $fbR);
-                $sheet->setCellValue("M{$row}", $hbR);
-                $sheet->setCellValue("N{$row}", $qbR);
-                $sheet->setCellValue("O{$row}", $ebR);
-                $sheet->setCellValue("P{$row}", $dbR);
-                $sheet->setCellValue("Q{$row}", $piecesR);
-                $sheet->setCellValue("R{$row}", $fullsR);
-
-                $sheet->setCellValue("S{$row}", $returns);
-                $sheet->setCellValue("T{$row}", $missing);
-                $sheet->setCellValue("U{$row}", $coordination->observation);
+                // $sheet->setCellValue("L{$row}", $fbR);
+                // $sheet->setCellValue("M{$row}", $hbR);
+                // $sheet->setCellValue("N{$row}", $qbR);
+                // $sheet->setCellValue("O{$row}", $ebR);
+                // $sheet->setCellValue("P{$row}", $dbR);
+                $sheet->setCellValue("{$column}{$row}", $piecesR);
+                $column++;
+                $sheet->setCellValue("{$column}{$row}", $fullsR);
+                $column++;
+                $sheet->setCellValue("{$column}{$row}", $returns);
+                $column++;
+                $sheet->setCellValue("{$column}{$row}", $missing);
+                $column++;
+                $sheet->setCellValue("{$column}{$row}", $coordination->observation);
 
 
                 /*
@@ -801,40 +988,128 @@ class FlightCompleteExport
             | CLIENT SUBTOTAL ROW
             |--------------------------------------------------------------------------
             */
+            // Fila de subtotal del cliente.
+            $totalRow = $row;
+            $sheet->getRowDimension($totalRow)->setRowHeight(17);
+            $sheet->mergeCells("B{$totalRow}:D{$totalRow}");
+            $sheet->setCellValue("B{$totalRow}", 'SUBTOTAL');
+            // Color de subtotal 
+            $sheet->getStyle("B{$row}:D{$row}")->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'color' => ['rgb' => '000000'],
+                    'size' => 13,
+                ],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'color' => ['rgb' => 'F1F3F5'],
+                ],
+            ]);
+            // $sheet->setCellValue("B{$row}", 'SUBTOTAL');
+            // 
+            // Sumar las columnas numéricas de la tabla.
+            $lastDataRow = $totalRow - 1;
+            // dd($lastDataRow); //14
+            // dd($row_first); //13
 
-            $sheet->setCellValue("B{$row}", 'SUBTOTAL');
+            // $sheet->mergeCells("B{$row}:D{$row}");
+            // if ($lastDataRow > $row_first){
+            //     $column = 'E';
+            //     // Totales de cajas coordinadas.
+            //     foreach ($activeBoxes as $box) {
+            //         $sheet->setCellValue(
+            //             "{$column}{$totalRow}",
+            //             "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})"
+            //         );
 
-            $sheet->mergeCells("B{$row}:D{$row}");
+            //         $column++;
+            //     }
 
-            $sheet->setCellValue("E{$row}", '=SUM(E' . ($row - 1) . ':E' . $row_first . ')');
-            $sheet->setCellValue("F{$row}", '=SUM(F' . ($row - 1) . ':F' . $row_first . ')');
-            $sheet->setCellValue("G{$row}", '=SUM(G' . ($row - 1) . ':G' . $row_first . ')');
-            $sheet->setCellValue("H{$row}", '=SUM(H' . ($row - 1) . ':H' . $row_first . ')');
-            $sheet->setCellValue("I{$row}", '=SUM(I' . ($row - 1) . ':I' . $row_first . ')');
-            $sheet->setCellValue("J{$row}", '=SUM(J' . ($row - 1) . ':J' . $row_first . ')');
-            $sheet->setCellValue("K{$row}", '=SUM(K' . ($row - 1) . ':K' . $row_first . ')');
+                
+            // } else {
+            //     $sheet->setCellValue("B{$totalRow}", 'SIN COORDINACIONES');
+            // }
+            // continue;
 
-            $sheet->setCellValue("L{$row}", '=SUM(L' . ($row - 1) . ':L' . $row_first . ')');
-            $sheet->setCellValue("M{$row}", '=SUM(M' . ($row - 1) . ':M' . $row_first . ')');
-            $sheet->setCellValue("N{$row}", '=SUM(N' . ($row - 1) . ':N' . $row_first . ')');
-            $sheet->setCellValue("O{$row}", '=SUM(O' . ($row - 1) . ':O' . $row_first . ')');
-            $sheet->setCellValue("P{$row}", '=SUM(P' . ($row - 1) . ':P' . $row_first . ')');
-            $sheet->setCellValue("Q{$row}", '=SUM(Q' . ($row - 1) . ':Q' . $row_first . ')');
-            $sheet->setCellValue("R{$row}", '=SUM(R' . ($row - 1) . ':R' . $row_first . ')');
+            
+            $column = 'E';
+            // Totales de cajas coordinadas.
+            foreach ($activeBoxes as $box) {
+                $sheet->setCellValue(
+                    "{$column}{$row}",
+                    "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})"
+                );
 
-            $sheet->setCellValue("S{$row}", '=SUM(S' . ($row - 1) . ':S' . $row_first . ')');
-            $sheet->setCellValue("T{$row}", '=SUM(T' . ($row - 1) . ':T' . $row_first . ')');
+                $column++;
+            }
+            $sheet->setCellValue("{$column}{$row}", "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})");
+            $column++;
+            $sheet->setCellValue("{$column}{$row}", "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})");
+            
+            /*
+            |--------------------------------------------------------------------------
+            | SUBTOTAL STYLE
+            |--------------------------------------------------------------------------
+            */
+            // Color de subtotal coordinado
+            $sheet->getStyle("E{$row}:{$column}{$row}")->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'color' => ['rgb' => '000000'],
+                    'size' => 13,
+                ],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'color' => ['rgb' => 'EDF5FE'],
+                ],
+            ]);
+            $column++;
+            // Totales de cajas recibidas.
+            $tem_column = $column;
+            foreach ($activeBoxes as $box) {
+                $sheet->setCellValue(
+                    "{$column}{$row}",
+                    "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})"
+                );
 
-            $arrSubTotal[] = $row;
+                $column++;
+            }
+            
+            $sheet->setCellValue("{$column}{$row}", "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})");
+            $column++;
+            $sheet->setCellValue("{$column}{$row}", "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})");
+            /*
+            |--------------------------------------------------------------------------
+            | SUBTOTAL STYLE
+            |--------------------------------------------------------------------------
+            */
+            // Color subtotal Recibido
+            $sheet->getStyle("{$tem_column}{$row}:{$column}{$row}")->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'size' => 13,
+                ],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'color' => ['rgb' => 'FFF4CC'],
+                ],
+            ]);
+            $column++;
+            $tem_column2 = $column;
+            $sheet->setCellValue("{$column}{$row}", "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})");
+            $column++;
+            $sheet->setCellValue("{$column}{$row}", "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})");
+            $column++;
             /*
             |--------------------------------------------------------------------------
             | SUBTOTAL STYLE
             |--------------------------------------------------------------------------
             */
 
-            $sheet->getStyle("B{$row}:U{$row}")->applyFromArray([
+            $sheet->getStyle("{$tem_column2}{$row}:{$column}{$row}")->applyFromArray([
                 'font' => [
                     'bold' => true,
+                    'size' => 13,
                 ],
                 'fill' => [
                     'fillType' => Fill::FILL_SOLID,
@@ -842,8 +1117,50 @@ class FlightCompleteExport
                 ],
             ]);
 
-            $row++;
+            // $sheet->setCellValue("E{$row}", '=SUM(E' . ($row - 1) . ':E' . $row_first . ')');
+            // $sheet->setCellValue("F{$row}", '=SUM(F' . ($row - 1) . ':F' . $row_first . ')');
+            // $sheet->setCellValue("G{$row}", '=SUM(G' . ($row - 1) . ':G' . $row_first . ')');
+            // $sheet->setCellValue("H{$row}", '=SUM(H' . ($row - 1) . ':H' . $row_first . ')');
+            // $sheet->setCellValue("I{$row}", '=SUM(I' . ($row - 1) . ':I' . $row_first . ')');
+            // $sheet->setCellValue("J{$row}", '=SUM(J' . ($row - 1) . ':J' . $row_first . ')');
+            // $sheet->setCellValue("K{$row}", '=SUM(K' . ($row - 1) . ':K' . $row_first . ')');
 
+            // $sheet->setCellValue("L{$row}", '=SUM(L' . ($row - 1) . ':L' . $row_first . ')');
+            // $sheet->setCellValue("M{$row}", '=SUM(M' . ($row - 1) . ':M' . $row_first . ')');
+            // $sheet->setCellValue("N{$row}", '=SUM(N' . ($row - 1) . ':N' . $row_first . ')');
+            // $sheet->setCellValue("O{$row}", '=SUM(O' . ($row - 1) . ':O' . $row_first . ')');
+            // $sheet->setCellValue("P{$row}", '=SUM(P' . ($row - 1) . ':P' . $row_first . ')');
+            // $sheet->setCellValue("Q{$row}", '=SUM(Q' . ($row - 1) . ':Q' . $row_first . ')');
+            // $sheet->setCellValue("R{$row}", '=SUM(R' . ($row - 1) . ':R' . $row_first . ')');
+
+            // $sheet->setCellValue("S{$row}", '=SUM(S' . ($row - 1) . ':S' . $row_first . ')');
+            // $sheet->setCellValue("T{$row}", '=SUM(T' . ($row - 1) . ':T' . $row_first . ')');
+            // dd($column);
+            $arrSubTotal[] = $row;
+            
+
+            $sheet->getStyle("B{$row_client}:{$column}{$row}")->applyFromArray([
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['rgb' => 'CBD5E1'],
+                    ],
+                ],
+                'alignment' => [
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+
+            $row++;
+            $letra = 'A';
+            // dd($column_final);
+            $spreadsheet->getActiveSheet()->getStyle($letra . $row . ":" . $column_final . $row)->getFill()->setFillType(Fill::FILL_SOLID)
+                ->getStartColor()->setRGB('FFFFFF');
+            // for($letra; $letra <= "{$column_final}"; $letra++)
+            // {
+            //     $spreadsheet->getActiveSheet()->getStyle($letra . "{$row}:" . $letra . $row)->getFill()->setFillType(Fill::FILL_SOLID)
+            //     ->getStartColor()->setRGB('FFFFFF');
+            // }
 
             /*
             |--------------------------------------------------------------------------
@@ -858,11 +1175,14 @@ class FlightCompleteExport
             // Espacio entre clientes
             $row++;
             
+            
         }
         // dd($arrSubTotal);
-        
+        // dd($column);
+        $columnT = chr(ord($column) - 1);
+        // dd($columnT);
         $i = 'E';
-        for($i; $i <= 'T'; $i++)
+        for($i; $i <= $columnT; $i++)
         {
             $cadena = '';
             //$cadena2 .= $i;
@@ -907,20 +1227,20 @@ class FlightCompleteExport
         | GLOBAL TOTAL STYLE
         |--------------------------------------------------------------------------
         */
-
-        $sheet->getStyle("B{$row}:U{$row}")->applyFromArray([
+        // dd($row);
+        $sheet->getStyle("B{$row}:{$column}{$row}")->applyFromArray([
             'font' => [
                 'bold' => true,
                 'size' => 15,
             ],
             'fill' => [
                 'fillType' => Fill::FILL_SOLID,
-                'color' => ['rgb' => 'CBD5E1'],
+                'color' => ['rgb' => 'BBD2EA'],
             ],
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,
-                    'color' => ['rgb' => '94A3B8'],
+                    'color' => ['rgb' => 'B7C7D8'],
                 ],
             ],
         ]);
@@ -933,18 +1253,18 @@ class FlightCompleteExport
         */
 
         $lastRow = $row;
-
-        $sheet->getStyle("B12:U{$lastRow}")->applyFromArray([
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_THIN,
-                    'color' => ['rgb' => 'CBD5E1'],
-                ],
-            ],
-            'alignment' => [
-                'vertical' => Alignment::VERTICAL_CENTER,
-            ],
-        ]);
+        
+        // $sheet->getStyle("B12:{$column}{$lastRow}")->applyFromArray([
+        //     'borders' => [
+        //         'allBorders' => [
+        //             'borderStyle' => Border::BORDER_THIN,
+        //             'color' => ['rgb' => 'CBD5E1'],
+        //         ],
+        //     ],
+        //     'alignment' => [
+        //         'vertical' => Alignment::VERTICAL_CENTER,
+        //     ],
+        // ]);
 
 
         /*
@@ -953,11 +1273,18 @@ class FlightCompleteExport
         |--------------------------------------------------------------------------
         */
 
-        $sheet->getStyle("K13:K{$lastRow}")
+        $column = 'E';
+        // dd(count($activeBoxes));
+        $column = chr(ord($column) + count($activeBoxes) + 1);
+        // dd($column);
+        $sheet->getStyle("{$column}13:{$column}{$lastRow}")
             ->getNumberFormat()
             ->setFormatCode('#,##0.000');
-
-        $sheet->getStyle("R13:R{$lastRow}")
+        $column++;
+        
+        $column = chr(ord($column) + count($activeBoxes) + 1);
+        // dd($column);
+        $sheet->getStyle("{$column}13:{$column}{$lastRow}")
             ->getNumberFormat()
             ->setFormatCode('#,##0.000');
 
@@ -967,10 +1294,19 @@ class FlightCompleteExport
         | ALIGN NUMBERS
         |--------------------------------------------------------------------------
         */
-
-        $sheet->getStyle("E12:T{$lastRow}")
+        $column = chr(ord($column) + 3);
+        // dd($column);
+        $sheet->getStyle("D12:{$column}{$lastRow}")
             ->getAlignment()
             ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        $sheet->getStyle("B13:B{$lastRow}")
+            ->getAlignment()
+            ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // $sheet->getStyle("C13:C{$lastRow}")
+        //     ->getAlignment()
+        //     ->setHorizontal(Alignment::HORIZONTAL_LEFT);
 
 
         /*
