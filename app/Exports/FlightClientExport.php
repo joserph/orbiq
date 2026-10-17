@@ -86,7 +86,7 @@ class FlightClientExport
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,
-                    'color' => ['rgb' => 'B7C0CE'],
+                    'color' => ['rgb' => 'B7C7D8'],
                 ],
             ],
         ];
@@ -180,7 +180,7 @@ class FlightClientExport
             ],
             'fill' => [
                 'fillType' => Fill::FILL_SOLID,
-                'color' => ['rgb' => '34226A'],
+                'color' => ['rgb' => '24435F'],
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_LEFT,
@@ -417,7 +417,30 @@ class FlightClientExport
             ],
             'fill' => [
                 'fillType' => Fill::FILL_SOLID,
-                'color' => ['rgb' => '34226A'], // 34226A - 172033
+                'color' => ['rgb' => '24435F'], // 34226A - 172033
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => 'FFFFFF'],
+                ],
+            ],
+        ];
+        // Estilo celda coordinadas
+        $headerStyle_c = [
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => 'FFFFFF'],
+                'size' => 10,
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'color' => ['rgb' => '247FB8'], // 34226A - 172033
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -473,6 +496,8 @@ class FlightClientExport
         | SECOND HEADER ROW
         |--------------------------------------------------------------------------
         */
+        $sheet->getStyle("B{$row}:D" . ($row + 1))
+            ->applyFromArray($headerStyle);
         $column = 'E';
         
         $rowH = $row + 1;
@@ -492,8 +517,8 @@ class FlightClientExport
         $spreadsheet->getActiveSheet()->getColumnDimension("{$column}")->setWidth(11);
         $sheet->setCellValue("{$column}{$rowH}", 'FULLS');
         
-        $sheet->getStyle("B{$row}:{$column}" . ($row + 1))
-            ->applyFromArray($headerStyle);
+        $sheet->getStyle("E{$row}:{$column}" . ($row + 1))
+            ->applyFromArray($headerStyle_c);
         $column++;
 
         $column_r = $column;
@@ -521,7 +546,7 @@ class FlightClientExport
             ],
             'fill' => [
                 'fillType' => Fill::FILL_SOLID,
-                'color' => ['rgb' => '172033'], // 34226A - 172033
+                'color' => ['rgb' => 'FFB800'], // 34226A - 172033
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -716,6 +741,7 @@ class FlightClientExport
                 strtoupper($varieties)
             );
             $column = 'E';
+            $sum_column = $column;
             // Cajas coordinadas.
             foreach ($activeBoxes as $box) {
                 $sheet->setCellValue(
@@ -726,15 +752,31 @@ class FlightClientExport
                 $column++;
             }
             // Coordinated
-            // $sheet->setCellValue("E{$row}", $fb);
-            // $sheet->setCellValue("F{$row}", $hb);
-            // $sheet->setCellValue("G{$row}", $qb);
-            // $sheet->setCellValue("H{$row}", $eb);
-            // $sheet->setCellValue("I{$row}", $db);
-            $sheet->setCellValue("{$column}{$row}", $pieces);
+            // Celda de Piezas - 1
+            $pieza_nemos_uno = chr(ord($column) - 1);
+            $pesos = [
+                'fb' => 1,
+                'hb' => 0.5,
+                'qb' => 0.25,
+                'eb' => 0.125,
+                'db' => 0.0625,
+            ];
+            $partes = [];
+            // Calculo para suma horizontal y dependiendo del tipo de caja coordinada
+            foreach($activeBoxes as $box){
+                if(!isset($pesos[$box])) continue;
+                $peso = $pesos[$box];
+                $partes[] = "({$sum_column}{$row}*{$peso})";
+                $sum_column++;
+            }
+            $formula_c = '=' . implode('+', $partes);
+            
+            $sheet->setCellValue("{$column}{$row}", "=SUM(E{$row}:{$pieza_nemos_uno}{$row})");
+            $col_pieces_c = $column;
             $column++;
-            $sheet->setCellValue("{$column}{$row}", $fulls);
+            $sheet->setCellValue("{$column}{$row}", $formula_c);
             $column++;
+            $sum_column_r = $column;
             // Cajas recibidas.
             foreach ($activeBoxes as $box) {
                 $receivedField = $box . '_r';
@@ -746,22 +788,29 @@ class FlightClientExport
 
                 $column++;
             }
+            // Calculo para suma horizontal y dependiendo del tipo de caja recibida
+            $pieza_nemos_uno_r = chr(ord($column) - 1);
+            $pieza_mas_dos = chr(ord($pieza_nemos_uno) + 3);
+            $partes_r = [];
+            foreach($activeBoxes as $box){
+                if(!isset($pesos[$box])) continue;
+                $peso = $pesos[$box];
+                $partes_r[] = "({$sum_column_r}{$row}*{$peso})";
+                $sum_column_r++;
+            }
+            $formula_r = '=' . implode('+', $partes_r);
             // Received
-            // $sheet->setCellValue("L{$row}", $fbR);
-            // $sheet->setCellValue("M{$row}", $hbR);
-            // $sheet->setCellValue("N{$row}", $qbR);
-            // $sheet->setCellValue("O{$row}", $ebR);
-            // $sheet->setCellValue("P{$row}", $dbR);
-            $sheet->setCellValue("{$column}{$row}", $piecesR);
+            
+            $sheet->setCellValue("{$column}{$row}", "=SUM({$pieza_mas_dos}{$row}:{$pieza_nemos_uno_r}{$row})");
+            $col_pieces_r = $column;
             $column++;
-            $sheet->setCellValue("{$column}{$row}", $fullsR);
+            $sheet->setCellValue("{$column}{$row}", $formula_r);
             $column++;
             $sheet->setCellValue("{$column}{$row}", $returns);
             $column++;
-            $sheet->setCellValue("{$column}{$row}", $missing);
+            $sheet->setCellValue("{$column}{$row}", "=+{$col_pieces_c}{$row}-{$col_pieces_r}{$row}");
             $column++;
             $sheet->setCellValue("{$column}{$row}", $coordination->observation);
-
 
             /*
             |--------------------------------------------------------------------------
@@ -802,6 +851,19 @@ class FlightClientExport
         $sheet->mergeCells("B{$totalRow}:D{$totalRow}");
         $sheet->setCellValue("B{$totalRow}", 'TOTAL');
 
+        // Color de subtotal 
+        $sheet->getStyle("B{$row}:D{$row}")->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => '000000'],
+                'size' => 13,
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'color' => ['rgb' => 'F1F3F5'],
+            ],
+        ]);
+
         $column = 'E';
         // Totales de cajas coordinadas.
         foreach ($activeBoxes as $box) {
@@ -815,8 +877,27 @@ class FlightClientExport
         $sheet->setCellValue("{$column}{$row}", "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})");
         $column++;
         $sheet->setCellValue("{$column}{$row}", "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})");
+
+        /*
+        |--------------------------------------------------------------------------
+        | SUBTOTAL STYLE
+        |--------------------------------------------------------------------------
+        */
+        // Color de subtotal coordinado
+        $sheet->getStyle("E{$row}:{$column}{$row}")->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => '000000'],
+                'size' => 13,
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'color' => ['rgb' => 'EDF5FE'],
+            ],
+        ]);
         $column++;
         // Totales de cajas coordinadas.
+        $tem_column = $column;
         foreach ($activeBoxes as $box) {
             $sheet->setCellValue(
                 "{$column}{$row}",
@@ -829,7 +910,25 @@ class FlightClientExport
         $sheet->setCellValue("{$column}{$row}", "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})");
         $column++;
         $sheet->setCellValue("{$column}{$row}", "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})");
+        /*
+        |--------------------------------------------------------------------------
+        | SUBTOTAL STYLE
+        |--------------------------------------------------------------------------
+        */
+        // Color subtotal Recibido
+        $sheet->getStyle("{$tem_column}{$row}:{$column}{$row}")->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'size' => 13,
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'color' => ['rgb' => 'FFF4CC'],
+            ],
+        ]);
+
         $column++;
+        $tem_column2 = $column;
         $sheet->setCellValue("{$column}{$row}", "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})");
         $column++;
         $sheet->setCellValue("{$column}{$row}", "=SUM({$column}" . ($row - 1) . ":{$column}{$row_first})");
@@ -842,10 +941,10 @@ class FlightClientExport
         |--------------------------------------------------------------------------
         */
 
-        $sheet->getStyle("B{$row}:{$column}{$row}")->applyFromArray([
+        $sheet->getStyle("{$tem_column2}{$row}:{$column}{$row}")->applyFromArray([
             'font' => [
                 'bold' => true,
-                'size' => 15,
+                'size' => 13,
             ],
             'fill' => [
                 'fillType' => Fill::FILL_SOLID,
