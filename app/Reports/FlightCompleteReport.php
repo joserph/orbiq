@@ -92,7 +92,7 @@ class FlightCompleteReport
             ->groupBy(function ($coordination) {
 
                 return $coordination->client?->name
-                    ?? 'WITHOUT COMMERCIALIZER';
+                    ?? 'WITHOUT CLIENT';
 
             });
 
@@ -126,8 +126,24 @@ class FlightCompleteReport
             fn ($coordination) => (float) ($coordination->fulls ?? 0)
         );
 
+        $totals['coordinated']['pieces'] = $coordinations->sum(
+            fn ($coordination) => (float) ($coordination->pieces ?? 0)
+        );
+
         $totals['received']['fulls'] = $coordinations->sum(
             fn ($coordination) => (float) ($coordination->fulls_r ?? 0)
+        );
+
+        $totals['received']['pieces'] = $coordinations->sum(
+            fn ($coordination) => (float) ($coordination->pieces_r ?? 0)
+        );
+
+        $totals['returns'] = $coordinations->sum(
+            fn ($coordination) => (float) ($coordination->returns ?? 0)
+        );
+
+        $totals['missing'] = $coordinations->sum(
+            fn ($coordination) => (float) ($coordination->missing ?? 0)
         );
 
         /*
@@ -142,6 +158,7 @@ class FlightCompleteReport
          * RETURN DATA
          * ---------------------------------------------------------
          */
+        // dd($totals);
 
         return [
             'flight' => $flight,

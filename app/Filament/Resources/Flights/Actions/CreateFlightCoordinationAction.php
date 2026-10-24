@@ -71,8 +71,8 @@ class CreateFlightCoordinationAction
 
 
         return Action::make('createCoordination')
-            ->label('New Coordination')
-            ->icon('heroicon-o-plus')
+            ->label('Coordination')
+            ->icon('heroicon-o-plus-circle')
             ->modalHeading('New Flight Coordination')
             ->modalWidth('7xl')
             ->schema([

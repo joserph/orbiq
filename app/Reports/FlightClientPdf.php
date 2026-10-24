@@ -11,7 +11,7 @@ class FlightClientPdf
     public static function generate(Flight $flight, Client $client)
     {
         $data = FlightCompleteReport::data($flight);
-
+        // dd($data);
         // Obtener únicamente las coordinaciones del cliente.
         $coordinations = $flight->coordinations()
             ->with(['client', 'farm'])
@@ -55,14 +55,26 @@ class FlightClientPdf
             );
         }
 
+        $totals['coordinated']['pieces'] = $coordinations->sum(
+            fn ($item) => (float) ($item->pieces ?? 0)
+        );
         $totals['coordinated']['fulls'] = $coordinations->sum(
             fn ($item) => (float) ($item->fulls ?? 0)
         );
 
+        $totals['received']['pieces'] = $coordinations->sum(
+            fn ($item) => (float) ($item->pieces_r ?? 0)
+        );
         $totals['received']['fulls'] = $coordinations->sum(
             fn ($item) => (float) ($item->fulls_r ?? 0)
         );
-
+        $totals['returns'] = $coordinations->sum(
+            fn ($item) => (float) ($item->returns ?? 0)
+        );
+        $totals['missing'] = $coordinations->sum(
+            fn ($item) => (float) ($item->missing ?? 0)
+        );
+        // dd($totals);
         // La plantilla recorre las coordinaciones agrupadas.
         $data['coordinations'] = $coordinations->groupBy(
             fn ($item) => $item->client?->name ?? $client->name

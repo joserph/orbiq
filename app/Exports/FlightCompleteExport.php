@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\Client;
 use App\Models\Company;
 use App\Models\Flight;
 use App\Models\FlowerVariety;
@@ -54,12 +55,18 @@ class FlightCompleteExport
         | BACKGROUND 
         |--------------------------------------------------------------------------
         */
-        // Coordinaciones de la guia especifica
+        // Coordinaciones de la guia especifica ordenado por cliente
         $coordinations = $this->flight->coordinations()
             ->with([
                 'client',
                 'farm',
             ])
+            ->orderBy(
+                Client::select('name')
+                    ->whereColumn('clients.id', 'flight_coordinations.client_id')
+                    ->limit(1),
+                'asc'
+            )
             ->get();
         // Agrupamos los clientes de la guia
         $groups = $coordinations->groupBy('client_id');
@@ -997,17 +1004,97 @@ class FlightCompleteExport
             $row++;
         }
         
+        $sheet->getStyle("B{$row}:D{$row}")->applyFromArray([
+            'font' => ['bold' => true, 'size' => 13],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'color' => ['rgb' => 'BBD2EA'], // verde claro, cámbialo si quieres
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => 'CBD5E1'],
+                ],
+            ],
+        ]);
+
         $columnT = chr(ord($column) - 1);
         $i = 'E';
+        $totalBase = count($activeBoxes);
+
+        // Definir los 3 rangos (cantidades por bloque)
+        $rango1 = $totalBase + 2;          // Bloque 1: color azul claro
+        $rango2 = $totalBase + 2;          // Bloque 2: color amarillo claro
+        $rango3 = 3;                       // Bloque 3: 2 campos más con otro color
+
+        // Contadores independientes
+        $contador1 = 0;
+        $contador2 = 0;
+        $contador3 = 0;
+        // dd($columnT);
         for($i; $i <= $columnT; $i++)
         {
             $cadena = '';
+            
             foreach($arrSubTotal as $tot)
             {
                 $cadena .= '+' . $i . $tot;
             }
             $sheet->setCellValue($i . $row, '=' . $cadena);
+
+            // Bloque 1: primeras N + 2 columnas
+            if ($contador1 < $rango1) {
+                $sheet->getStyle($i . $row)->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 13],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'color' => ['rgb' => 'EDF5FE'],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => 'CBD5E1'],
+                        ],
+                    ],
+                ]);
+                $contador1++;
+            }
+            // Bloque 2: siguientes N + 2 columnas
+            elseif ($contador2 < $rango2) {
+                $sheet->getStyle($i . $row)->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 13],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'color' => ['rgb' => 'FFF4CC'],
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => 'CBD5E1'],
+                        ],
+                    ],
+                ]);
+                $contador2++;
+            }
+            // Bloque 3: 2 columnas finales con otro color
+            elseif ($contador3 < $rango3) {
+                $sheet->getStyle($i . $row)->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 13],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'color' => ['rgb' => 'BBD2EA'], // verde claro, cámbialo si quieres
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                            'color' => ['rgb' => 'CBD5E1'],
+                        ],
+                    ],
+                ]);
+                $contador3++;
+            }
         }
+
         /*
         |--------------------------------------------------------------------------
         | GLOBAL TOTAL
@@ -1023,22 +1110,22 @@ class FlightCompleteExport
         | GLOBAL TOTAL STYLE
         |--------------------------------------------------------------------------
         */
-        $sheet->getStyle("B{$row}:{$column}{$row}")->applyFromArray([
-            'font' => [
-                'bold' => true,
-                'size' => 15,
-            ],
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'color' => ['rgb' => 'BBD2EA'],
-            ],
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_THIN,
-                    'color' => ['rgb' => 'B7C7D8'],
-                ],
-            ],
-        ]);
+        // $sheet->getStyle("B{$row}:{$column}{$row}")->applyFromArray([
+        //     'font' => [
+        //         'bold' => true,
+        //         'size' => 15,
+        //     ],
+        //     'fill' => [
+        //         'fillType' => Fill::FILL_SOLID,
+        //         'color' => ['rgb' => 'BBD2EA'],
+        //     ],
+        //     'borders' => [
+        //         'allBorders' => [
+        //             'borderStyle' => Border::BORDER_THIN,
+        //             'color' => ['rgb' => 'B7C7D8'],
+        //         ],
+        //     ],
+        // ]);
 
 
         /*

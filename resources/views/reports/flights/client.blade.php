@@ -71,39 +71,87 @@
         }
 
         th {
-            background: #000C24;
+            background: #24435F;
             color: white;
             font-size: 7px;
             padding: 5px 4px;
             text-align: center;
-            border: 1px solid #000C24;
+            border: 1px solid #FFFFFF;
         }
 
         th.coordinated {
-            background: #4C5C75;
+            background: #247FB8;
             color: white;
             font-size: 7px;
             padding: 5px 4px;
             text-align: center;
-            border: 1px solid #000C24;
+            border: 1px solid #FFFFFF;
         }
 
         th.received {
-            background: #0C2E59;
-            color: white;
+            background: #FFB800;
+            color: #000000;
             font-size: 7px;
             padding: 5px 4px;
             text-align: center;
-            border: 1px solid #000C24;
+            border: 1px solid #FFFFFF;
         }
 
-        th.returns {
-            background: #403F3D;
-            color: white;
+        th.subtotal {
+            background: #E5E7EB;
+            color: #000000;
             font-size: 7px;
             padding: 5px 4px;
             text-align: center;
-            border: 1px solid #000C24;
+            border: 1px solid #d1d5db;
+        }
+
+        th.subtotal_c {
+            background: #EDF5FE;
+            color: #000000;
+            font-size: 7px;
+            padding: 5px 4px;
+            text-align: center;
+            border: 1px solid #d1d5db;
+        }
+
+        th.subtotal_r {
+            background: #FFF4CC;
+            color: #000000;
+            font-size: 7px;
+            padding: 5px 4px;
+            text-align: center;
+            border: 1px solid #d1d5db;
+        }
+
+        th.total {
+            background: #BBD2EA;
+            color: #000000;
+            font-size: 8px;
+            padding: 4px 1px;
+            text-align: center;
+            border: 1px solid #B7C7D8;
+            /* padding-top: 50px; */
+        }
+
+        th.total_c {
+            background: #EDF5FE;
+            color: #000000;
+            font-size: 8px;
+            padding: 4px 1px;
+            text-align: center;
+            border: 1px solid #B7C7D8;
+            /* padding-top: 50px; */
+        }
+
+        th.total_r {
+            background: #FFF4CC;
+            color: #000000;
+            font-size: 8px;
+            padding: 4px 1px;
+            text-align: center;
+            border: 1px solid #B7C7D8;
+            /* padding-top: 50px; */
         }
 
         td {
@@ -132,15 +180,15 @@
             border: 1px solid #d1d5db;
         }
 
-        .subtotal {
+        /* .subtotal {
             background: #f9fafb;
             font-weight: bold;
-        }
+        } */
 
-        .total {
+        /* .total {
             margin-top: 15px;
             page-break-inside: avoid;
-        }
+        } */
 
         .total-title {
             font-size: 11px;
@@ -288,7 +336,7 @@
 
             <div class="section-title">
                 CLIENT:
-                {{ $commercializerName ?: 'WITHOUT COMMERCIALIZER' }}
+                {{ $commercializerName ?: 'WITHOUT CLIENT' }}
             </div>
 
             <table>
@@ -298,70 +346,56 @@
                         <th rowspan="2">HAWB</th>
                         <th rowspan="2">FARM</th>
                         <th rowspan="2">VARIETY</th>
-
-                        <th colspan="{{ count($activeBoxes) + 1 }}" class="coordinated">
+                        <th colspan="{{ count($activeBoxes) + 2 }}" class="coordinated">
                             COORDINATED
                         </th>
-
-                        <th colspan="{{ count($activeBoxes) + 1 }}" class="received">
+                        <th colspan="{{ count($activeBoxes) + 2 }}" class="received">
                             RECEIVED
                         </th>
-
-                        <th rowspan="2" class="returns">RETURNS</th>
+                        <th rowspan="2">RETURNS</th>
                         <th rowspan="2">MISSING</th>
+                        <th rowspan="2">OBSERVATIONS</th>
                     </tr>
-
                     <tr>
-
                         @foreach ($activeBoxes as $box)
                             <th class="coordinated">{{ strtoupper($box) }}</th>
                         @endforeach
-
+                        <th class="coordinated">PIECES</th>
                         <th class="coordinated">FULLS</th>
 
                         @foreach ($activeBoxes as $box)
-                            <th class="received">{{ strtoupper($box) }}</th>
+                            <th class="received">{{ strtoupper($box) . '_R' }}</th>
                         @endforeach
-
-                        <th class="received">FULLS</th>
-
+                        <th class="received">PIECES_R</th>
+                        <th class="received">FULLS_R</th>
                     </tr>
                 </thead>
-
                 <tbody>
-
                     @foreach ($items as $coordination)
-
                         <tr>
-
-                            <td class="text-left">
+                            <td class="text-center" width="70px">
                                 {{ $coordination->hawb ?? '—' }}
                             </td>
-
-                            <td class="text-left">
+                            <td class="text-left" width="250px">
                                 {{ $coordination->farm?->name ?? '—' }}
                             </td>
-
-                            <td class="text-left">
+                            <td class="text-center" width="90px">
                                 {{ $coordination->variety_names ?? '—' }}
                             </td>
-
                             {{-- COORDINATED --}}
-
                             @foreach ($activeBoxes as $box)
                                 <td class="number">
                                     {{ number_format((float) ($coordination->{$box} ?? 0), 0) }}
                                 </td>
                             @endforeach
-
+                            <td class="number">
+                                {{ number_format((float) ($coordination->pieces ?? 0), 0) }}
+                            </td>
                             <td class="number">
                                 {{ number_format((float) ($coordination->fulls ?? 0), 3) }}
                             </td>
-
                             {{-- RECEIVED --}}
-
                             @foreach ($activeBoxes as $box)
-
                                 @php
                                     $receivedField = $box . '_r';
                                 @endphp
@@ -369,29 +403,47 @@
                                 <td class="number">
                                     {{ number_format((float) ($coordination->{$receivedField} ?? 0), 0) }}
                                 </td>
-
                             @endforeach
-
+                            <td class="number">
+                                {{ number_format((float) ($coordination->pieces_r ?? 0), 0) }}
+                            </td>
                             <td class="number">
                                 {{ number_format((float) ($coordination->fulls_r ?? 0), 3) }}
                             </td>
-
-                            <td class="number">
+                            <td class="number" width="40px">
                                 {{ number_format((float) ($coordination->returns ?? 0), 0) }}
                             </td>
 
-                            <td class="number">
+                            <td class="number" width="40px">
                                 {{ number_format((float) ($coordination->missing ?? 0), 0) }}
                             </td>
-
+                            <td class="number" width="90px">
+                                {{ ($coordination->observation ?? '-') }}
+                            </td>
                         </tr>
-
                     @endforeach
-
                 </tbody>
-
+                <tfoot>
+                    <tr>
+                        <th class="subtotal" colspan="3">TOTAL</th>
+                        {{-- AQUI QUIERO LOS SUB TOTALES DE CADA CLIENTE  --}}
+                        {{-- SUBTOTALES COORDINATED (dinámicos por $activeBoxes) --}}
+                        @foreach ($activeBoxes as $box)
+                            <th class="number subtotal_c">{{ number_format($totals['coordinated'][$box], 0) }}</th>
+                        @endforeach
+                        <th class="number subtotal_c">{{ number_format($totals['coordinated']['pieces'], 0) }}</th>
+                        <th class="number subtotal_c">{{ number_format($totals['coordinated']['fulls'], 3) }}</th>
+                        @foreach ($activeBoxes as $box)
+                            <th class="number subtotal_r">{{ number_format($totals['received'][$box], 0) }}</th>
+                        @endforeach
+                        <th class="number subtotal_r">{{ number_format($totals['received']['pieces'], 0) }}</th>
+                        <th class="number subtotal_r">{{ number_format($totals['received']['fulls'], 3) }}</th>
+                        <th class="number subtotal">{{ number_format($totals['returns'], 0) }}</th>
+                        <th class="number subtotal">{{ number_format($totals['missing'], 0) }}</th>
+                        <th class="subtotal"></th>
+                    </tr>
+                </tfoot>
             </table>
-
         @endforeach
 
 
@@ -399,7 +451,7 @@
              GLOBAL TOTAL
         ====================================================== --}}
 
-        @if ($totals)
+        {{-- @if ($totals)
 
             <div class="total">
 
@@ -459,7 +511,7 @@
 
             </div>
 
-        @endif
+        @endif --}}
 
     @endif
 

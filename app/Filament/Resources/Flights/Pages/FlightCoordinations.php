@@ -23,6 +23,7 @@ use App\Models\Company;
 use App\Reports\FlightCompletePdf;
 use Filament\Actions\Action;
 use App\Models\MyCompany;
+use Filament\Actions\ActionGroup;
 
 class FlightCoordinations extends Page implements HasTable
 {
@@ -255,6 +256,8 @@ class FlightCoordinations extends Page implements HasTable
             ]);
     }
 
+    protected ?array $clientsForReportCache = null;
+
     public function getClientsForReport(): array
     {
         return Client::query()
@@ -273,71 +276,136 @@ class FlightCoordinations extends Page implements HasTable
     {
         // $company = Company::first();
         return [ 
-            CreateFlightCoordinationAction::make($this), 
-            Action::make('completePdf')
-                ->label('Complete PDF')
-                ->icon('heroicon-o-document-arrow-down')
-                ->url(fn () => route('reports.flight.complete', [
-                    'flight' => $this->record->id,
-                    // 'company' => $company,
-                ]))
-                ->openUrlInNewTab(),
-            
-            Action::make('completeExcel')
-                ->label('Excel completo')
-                ->icon('heroicon-o-document-arrow-down')
-                ->color('success')
-                ->url(fn () => route(
-                    'reports.flight.complete.excel',
-                    ['flight' => $this->record->id]
-                ))
-                ->openUrlInNewTab(),
-            
-            Action::make('clientPdf')
-                ->label('PDF por cliente')
-                ->icon('heroicon-o-document-text')
-                ->color('info')
-                ->form([
-                    \Filament\Forms\Components\Select::make('client_id')
-                        ->label('Cliente')
-                        ->options(fn () => $this->getClientsForReport())
-                        ->required()
-                        ->searchable(),
-                ])
-                ->action(function (array $data) {
-                    $url = route('reports.flight.client.pdf', [
+            // BOTON DE CREAR NUEVA COORDINACION
+            CreateFlightCoordinationAction::make($this)
+                ->color('info'), 
+            ActionGroup::make([
+                // PDF COMPLETO
+                Action::make('completePdf')
+                    ->label('PDF completo')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('warning')
+                    ->url(fn () => route('reports.flight.complete', [
                         'flight' => $this->record->id,
-                        'client' => $data['client_id'],
-                    ]);
+                        // 'company' => $company,
+                    ]))
+                    ->openUrlInNewTab(),
+                // PDF POR UN CLIENTE ESPECIFICO
+                Action::make('clientPdf')
+                    ->label('PDF por cliente')
+                    ->icon('heroicon-o-document-text')
+                    ->color('warning')
+                    ->form([
+                        \Filament\Forms\Components\Select::make('client_id')
+                            ->label('Cliente')
+                            ->options(fn () => $this->getClientsForReport())
+                            ->required()
+                            ->searchable(),
+                    ])
+                    ->visible(fn () => count($this->getClientsForReport()) >= 2)
+                    ->action(function (array $data) {
+                        $url = route('reports.flight.client.pdf', [
+                            'flight' => $this->record->id,
+                            'client' => $data['client_id'],
+                        ]);
 
-                    $this->js("window.open(" . \Illuminate\Support\Js::from($url) . ", '_blank')");
-                }),
+                        $this->js("window.open(" . \Illuminate\Support\Js::from($url) . ", '_blank')");
+                    }),
+                // PDF SELECCIONANDO VARIOS CLIENTES
+                Action::make('selectedClientsPdf')
+                    ->label('PDF por clientes seleccionados')
+                    ->icon('heroicon-o-document-text')
+                    ->color('warning')
+                    ->form([
+                        \Filament\Forms\Components\Select::make('client_ids')
+                            ->label('Clientes')
+                            ->options(fn () => $this->getClientsForReport())
+                            ->multiple()
+                            ->required()
+                            ->searchable()
+                            ->minItems(2),
+                    ])
+                    ->visible(fn () => count($this->getClientsForReport()) >= 3)
+                    ->action(function (array $data) {
+                        $url = route('reports.flight.selected-clients.pdf', [
+                            'flight' => $this->record->id,
+                            'client_ids' => $data['client_ids'],
+                        ]);
 
-            
-            Action::make('clientExcel')
-                ->label('Excel por cliente')
-                ->icon('heroicon-o-table-cells')
+                        $this->js(
+                            "window.open(" . \Illuminate\Support\Js::from($url) . ", '_blank')"
+                        );
+                    }),
+            ])
+                ->label('Reportes PDF')
+                ->icon('heroicon-o-document-chart-bar')
+                ->button(),
+
+            ActionGroup::make([
+                // EXCEL COMPLETO
+                Action::make('completeExcel')
+                    ->label('Excel completo')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('success')
+                    ->url(fn () => route(
+                        'reports.flight.complete.excel',
+                        ['flight' => $this->record->id]
+                    ))
+                    ->openUrlInNewTab(),
+                // EXCEL POR UN CLIENTE ESPECIFICO
+                Action::make('clientExcel')
+                    ->label('Excel por cliente')
+                    ->icon('heroicon-o-table-cells')
+                    ->color('success')
+                    ->form([
+                        \Filament\Forms\Components\Select::make('client_id')
+                            ->label('Cliente')
+                            ->options(fn () => $this->getClientsForReport())
+                            ->required()
+                            ->searchable(),
+                    ])
+                    ->visible(fn () => count($this->getClientsForReport()) >= 2)
+                    ->action(function (array $data) {
+                        $url = route('reports.flight.client.excel', [
+                            'flight' => $this->record->id,
+                            'client' => $data['client_id'],
+                        ]);
+
+                        $this->js(
+                            "window.open(" . \Illuminate\Support\Js::from($url) . ", '_blank')"
+                        );
+                    }),
+                // EXCEL SELECCIONANDO VARIOS CLIENTES
+                Action::make('selectedClientsExcel')
+                    ->label('Excel por clientes seleccionados')
+                    ->icon('heroicon-o-table-cells')
+                    ->color('success')
+                    ->form([
+                        \Filament\Forms\Components\Select::make('client_ids')
+                            ->label('Clientes')
+                            ->options(fn () => $this->getClientsForReport())
+                            ->multiple()
+                            ->required()
+                            ->searchable()
+                            ->minItems(2),
+                    ])
+                    ->visible(fn () => count($this->getClientsForReport()) >= 3)
+                    ->action(function (array $data) {
+                        $url = route('reports.flight.selected-clients.excel', [
+                            'flight' => $this->record->id,
+                            'client_ids' => $data['client_ids'],
+                        ]);
+
+                        $this->js(
+                            "window.open(" . \Illuminate\Support\Js::from($url) . ", '_blank')"
+                        );
+                    }),
+            ])
+                ->label('Reportes EXCEL')
+                ->icon('heroicon-o-document-chart-bar')
                 ->color('success')
-                ->form([
-                    \Filament\Forms\Components\Select::make('client_id')
-                        ->label('Cliente')
-                        ->options(fn () => $this->getClientsForReport())
-                        ->required()
-                        ->searchable(),
-                ])
-                ->action(function (array $data) {
-                    $url = route('reports.flight.client.excel', [
-                        'flight' => $this->record->id,
-                        'client' => $data['client_id'],
-                    ]);
-
-                    $this->js(
-                        "window.open(" . \Illuminate\Support\Js::from($url) . ", '_blank')"
-                    );
-                }),
-
-
-
+                ->button(),
+            
         ];
     }
 }

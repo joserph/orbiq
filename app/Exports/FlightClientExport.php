@@ -541,7 +541,7 @@ class FlightClientExport
         $headerStyle_r = [
             'font' => [
                 'bold' => true,
-                'color' => ['rgb' => 'FFFFFF'],
+                'color' => ['rgb' => '000000'],
                 'size' => 10,
             ],
             'fill' => [
