@@ -154,7 +154,18 @@
                                         ->implode(', ');
                                 @endphp
                                 <!-- INFORMATION -->
-                                <div class="flight-cell text-farm">{{ $coordination->farm?->name }}</div>
+                                {{-- <div class="flight-cell text-farm">{{ $coordination->farm?->name }}</div> --}}
+                                <div class="flight-cell text-farm">
+                                    <label style="display: inline-flex; align-items: center; column-gap: 12px;">
+                                        <input
+                                            type="checkbox"
+                                            wire:model.live="selectedCoordinations"
+                                            value="{{ $coordination->id }}"
+                                            class="rounded border-gray-300 text-primary-600 shadow-sm focus:ring-primary-500"
+                                        >
+                                        <span> {{ $coordination->farm?->name }}</span>
+                                    </label>
+                                </div>
                                 <div class="flight-cell text">{{ $coordination->hawb }}</div>
                                 <div class="flight-cell text">{{ $varieties }}</div>
                                 <!-- COORDINATED -->
@@ -254,9 +265,21 @@
                         <div class="mobile-card">
                             <!-- INFORMATION -->
                             <div class="mobile-section-title">INFORMATION</div>
-                            <div class="mobile-row">
+                            {{-- <div class="mobile-row">
                                 <span>FARM</span>
                                 <strong>{{ $coordination->farm?->name }}</strong>
+                            </div> --}}
+                            <div class="mobile-row">
+                                <span>FARM</span>
+                                <strong style="display: inline-flex; align-items: center; column-gap: 12px;">
+                                    <input
+                                        type="checkbox"
+                                        wire:model.live="selectedCoordinations"
+                                        value="{{ $coordination->id }}"
+                                        class="rounded border-gray-300 text-primary-600 shadow-sm focus:ring-primary-500"
+                                    >
+                                    {{ $coordination->farm?->name }}
+                                </strong>
                             </div>
                             <div class="mobile-row">
                                 <span>HAWB</span>

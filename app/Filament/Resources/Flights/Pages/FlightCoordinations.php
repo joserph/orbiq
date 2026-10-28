@@ -24,6 +24,7 @@ use App\Reports\FlightCompletePdf;
 use Filament\Actions\Action;
 use App\Models\MyCompany;
 use Filament\Actions\ActionGroup;
+use Filament\Tables\Columns\CheckboxColumn;
 
 class FlightCoordinations extends Page implements HasTable
 {
@@ -41,6 +42,101 @@ class FlightCoordinations extends Page implements HasTable
     }
 
     public string $search = '';
+
+    public array $selectedCoordinations = [];
+
+    public function getAvailableFlightsForTransfer(): array
+    {
+        return \App\Models\Flight::query()
+            ->where('id', '!=', $this->record->id)
+            ->orderBy('date', 'desc')
+            ->get()
+            ->mapWithKeys(function ($flight) {
+                $label = $flight->awb;
+
+                if ($flight->date) {
+                    $label .= ' - ' . $flight->date->format('d/m/Y');
+                }
+
+                return [$flight->id => $label];
+            })
+            ->all();
+    }
+
+    public function transferSelectedCoordinations(array $data): void
+    {
+        $selectedIds = collect($this->selectedCoordinations)
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values();
+        
+        if ($selectedIds->isEmpty()) {
+            \Filament\Notifications\Notification::make()
+                ->warning()
+                ->title('No hay coordinaciones seleccionadas')
+                ->send();
+
+            return;
+        }
+
+        $destinationFlightId = (int) ($data['destination_flight_id'] ?? 0);
+
+        if (
+            $destinationFlightId === (int) $this->record->id ||
+            ! \App\Models\Flight::query()->whereKey($destinationFlightId)->exists()
+        ) {
+            \Filament\Notifications\Notification::make()
+                ->danger()
+                ->title('AWB de destino no válido')
+                ->body('Selecciona un vuelo diferente al actual.')
+                ->send();
+
+            return;
+        }
+
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use (
+                $selectedIds,
+                $destinationFlightId
+            ) {
+                $coordinations = \App\Models\FlightCoordination::query()
+                    ->where('flight_id', $this->record->id)
+                    ->whereIn('id', $selectedIds)
+                    ->lockForUpdate()
+                    ->get();
+
+                if ($coordinations->count() !== $selectedIds->count()) {
+                    throw new \RuntimeException(
+                        'Una o más coordinaciones ya no pertenecen al AWB de origen.'
+                    );
+                }
+
+                \App\Models\FlightCoordination::query()
+                    ->where('flight_id', $this->record->id)
+                    ->whereIn('id', $selectedIds)
+                    ->update([
+                        'flight_id' => $destinationFlightId,
+                    ]);
+            });
+
+            $this->selectedCoordinations = [];
+            
+            \Filament\Notifications\Notification::make()
+                ->success()
+                ->title('Transferencia completada')
+                ->body('Las coordinaciones se trasladaron al AWB de destino.')
+                ->send();
+
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            \Filament\Notifications\Notification::make()
+                ->danger()
+                ->title('No se pudo completar la transferencia')
+                ->body('No se modificaron las coordinaciones. Verifica los datos e inténtalo nuevamente.')
+                ->send();
+        }
+    }
 
     public function getCoordinations()
     {
@@ -289,6 +385,7 @@ class FlightCoordinations extends Page implements HasTable
                         'flight' => $this->record->id,
                         // 'company' => $company,
                     ]))
+                    ->visible(fn () => count($this->getClientsForReport()) >= 1)
                     ->openUrlInNewTab(),
                 // PDF POR UN CLIENTE ESPECIFICO
                 Action::make('clientPdf')
@@ -351,6 +448,7 @@ class FlightCoordinations extends Page implements HasTable
                         'reports.flight.complete.excel',
                         ['flight' => $this->record->id]
                     ))
+                    ->visible(fn () => count($this->getClientsForReport()) >= 1)
                     ->openUrlInNewTab(),
                 // EXCEL POR UN CLIENTE ESPECIFICO
                 Action::make('clientExcel')
@@ -405,6 +503,38 @@ class FlightCoordinations extends Page implements HasTable
                 ->icon('heroicon-o-document-chart-bar')
                 ->color('success')
                 ->button(),
+
+            // Action::make('transferCoordinations')
+            //     ->label('Transferir coordinaciones')
+            //     ->icon('heroicon-o-arrow-right-circle')
+            //     ->color('primary')
+            //     ->form([
+            //         \Filament\Forms\Components\Select::make('destination_flight_id')
+            //             ->label('AWB de destino')
+            //             ->options(fn () => $this->getAvailableFlightsForTransfer())
+            //             ->searchable()
+            //             ->required(),
+            //     ])
+            //     ->visible(fn () => count($this->selectedCoordinations) > 0),
+            Action::make('transferCoordinations')
+                ->label('Transferir coordinaciones')
+                ->icon('heroicon-o-arrow-right-circle')
+                ->color('primary')
+                ->form([
+                    \Filament\Forms\Components\Select::make('destination_flight_id')
+                        ->label('AWB de destino')
+                        ->options(fn () => $this->getAvailableFlightsForTransfer())
+                        ->searchable()
+                        ->required(),
+                ])
+                ->requiresConfirmation()
+                ->modalHeading('Confirmar transferencia')
+                ->modalDescription(
+                    'Las coordinaciones seleccionadas se moverán al AWB de destino. Desaparecerán del vuelo actual y conservarán sus demás datos.'
+                )
+                ->modalSubmitActionLabel('Sí, transferir')
+                ->action(fn (array $data) => $this->transferSelectedCoordinations($data))
+                ->visible(fn () => count($this->selectedCoordinations) > 0),
             
         ];
     }

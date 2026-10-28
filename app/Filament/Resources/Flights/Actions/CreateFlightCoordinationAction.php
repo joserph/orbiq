@@ -14,6 +14,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use App\Filament\Resources\Flights\Pages\FlightCoordinations;
+use Illuminate\Validation\Rule;
 
 class CreateFlightCoordinationAction
 {
@@ -60,7 +61,8 @@ class CreateFlightCoordinationAction
                 $ebR +
                 $dbR;
 
-            $missing = $pieces - $piecesR;
+            // $missing = $pieces - $piecesR;
+            $missing = max($pieces - $piecesR, 0);
 
             $set('fulls', number_format($fulls, 3, '.', ''));
             $set('pieces', $pieces);
@@ -99,7 +101,11 @@ class CreateFlightCoordinationAction
                         TextInput::make('hawb')
                             ->label('HAWB')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->rules([
+                                fn ($get) => Rule::unique('flight_coordinations', 'hawb')
+                                    ->where('flight_id', $page->record->id),
+                            ]),
                         Select::make('client_id')
                             ->label('Client')
                             ->options(

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Flights\Schemas;
 
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -78,6 +79,21 @@ class FlightInfolist
                             ->label('Active')
                             ->boolean(),
                     ]),
+                Section::make('Info Thermographs')
+                    ->schema([
+                        RepeatableEntry::make('thermographs')
+                        ->label('Termógrafos')
+                        ->schema([
+                            TextEntry::make('thermographic_code')
+                                ->label('Código del termógrafo'),
+
+                            TextEntry::make('thermograph_brand')
+                                ->label('Marca'),
+                        ])
+                        ->columns(2)
+                        ->columnSpanFull(),
+                    ]),
+                
 
                 Section::make('Audit')
                     ->schema([

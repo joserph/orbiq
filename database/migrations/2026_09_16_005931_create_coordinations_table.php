@@ -18,7 +18,9 @@ return new class extends Migration
             $table->foreignId('flight_id')
                 ->constrained('flights')
                 ->cascadeOnDelete();
-            $table->string('hawb')->nullable();
+            $table->string('hawb');
+            // $table->unique('hawb', 'flight_coordinations_hawb_unique');
+            $table->unique(['flight_id', 'hawb'], 'flight_coordinations_flight_hawb_unique');
 
             // Coordinated quantities
             $table->unsignedInteger('fb')->default(0);
@@ -76,23 +78,30 @@ return new class extends Migration
             $table->unsignedInteger('returns')->default(0);
 
             // Calculated missing pieces
-            $table->integer('missing')
-                ->storedAs('
-                    (
-                        COALESCE(fb, 0) +
-                        COALESCE(hb, 0) +
-                        COALESCE(qb, 0) +
-                        COALESCE(eb, 0) +
-                        COALESCE(db, 0)
-                    ) -
-                    (
-                        COALESCE(fb_r, 0) +
-                        COALESCE(hb_r, 0) +
-                        COALESCE(qb_r, 0) +
-                        COALESCE(eb_r, 0) +
-                        COALESCE(db_r, 0)
-                    )
-                ');
+            // $table->integer('missing')
+            //     ->storedAs('
+            //         (
+            //             COALESCE(fb, 0) +
+            //             COALESCE(hb, 0) +
+            //             COALESCE(qb, 0) +
+            //             COALESCE(eb, 0) +
+            //             COALESCE(db, 0)
+            //         ) -
+            //         (
+            //             COALESCE(fb_r, 0) +
+            //             COALESCE(hb_r, 0) +
+            //             COALESCE(qb_r, 0) +
+            //             COALESCE(eb_r, 0) +
+            //             COALESCE(db_r, 0)
+            //         )
+            //     ');
+            $table->integer('missing')->storedAs(
+                'GREATEST(
+                    COALESCE(fb, 0) + COALESCE(hb, 0) + COALESCE(qb, 0) + COALESCE(eb, 0) + COALESCE(db, 0)
+                    - COALESCE(fb_r, 0) - COALESCE(hb_r, 0) - COALESCE(qb_r, 0) - COALESCE(eb_r, 0) - COALESCE(db_r, 0),
+                    0
+                )'
+            );
 
             // Relations
             $table->foreignId('client_id')

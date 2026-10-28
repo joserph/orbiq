@@ -16,6 +16,7 @@ return new class extends Migration
 
             // AWB Information
             $table->string('awb');
+            $table->unique('awb', 'flights_awb_unique');
             $table->string('type_awb');
 
             // Companies
@@ -74,6 +75,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users')
                 ->nullOnDelete();
+            $table->json('thermographs')->nullable();
 
             $table->timestamps();
         });

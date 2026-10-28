@@ -15,7 +15,8 @@ class ListFlights extends ListRecords
         return [
             CreateAction::make()
                 ->modal()
-                ->modalHeading('Create Flight'),
+                ->modalHeading('Create Flight')
+                ->modalWidth('7xl'),
         ];
     }
 }

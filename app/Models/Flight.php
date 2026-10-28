@@ -33,7 +33,7 @@ class Flight extends Model
         'hb_status',
         'qb_status',
         'eb_status',
-        'db_status'
+        'thermographs'
     ];
 
     protected function casts(): array
@@ -47,6 +47,7 @@ class Flight extends Model
             'qb_status' => 'boolean',
             'eb_status' => 'boolean',
             'db_status' => 'boolean',
+            'thermographs' => 'array'
         ];
     }
 

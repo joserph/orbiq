@@ -34,6 +34,7 @@ class FlightsTable
 
                 TextColumn::make('logisticsCompany.name')
                     ->label('Logistics Company')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable()
                     ->sortable(),
 
@@ -59,13 +60,22 @@ class FlightsTable
                 TextColumn::make('destinationCity.name')
                     ->label('Destination')
                     ->searchable(),
-
+                TextColumn::make('thermographs')
+                    ->label('Termógrafos')
+                    ->state(fn ($record) => collect($record->thermographs)
+                        ->pluck('thermographic_code')
+                        ->filter()
+                        ->implode(', '))
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->searchable(),
                 TextColumn::make('consignee')
                     ->label('Consignee')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
 
                 TextColumn::make('entry_number')
                     ->label('Entry Number')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
 
                 IconColumn::make('status')
@@ -99,7 +109,8 @@ class FlightsTable
                     ->modalHeading('Flight Information'),
                 EditAction::make()
                     ->modal()
-                    ->modalHeading('Edit Flight'),
+                    ->modalHeading('Edit Flight')
+                    ->modalWidth('7xl'),
                 // Action::make('coordinations')
                 //     ->label('Coordinations')
                 //     ->icon('heroicon-o-clipboard-document-list')

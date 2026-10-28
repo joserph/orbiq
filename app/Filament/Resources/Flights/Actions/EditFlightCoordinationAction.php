@@ -58,7 +58,8 @@ class EditFlightCoordinationAction
                 $ebR +
                 $dbR;
 
-            $missing = $pieces - $piecesR;
+            // $missing = $pieces - $piecesR;
+            $missing = max($pieces - $piecesR, 0);
 
             $set('fulls', number_format($fulls, 3, '.', ''));
             $set('pieces', $pieces);
