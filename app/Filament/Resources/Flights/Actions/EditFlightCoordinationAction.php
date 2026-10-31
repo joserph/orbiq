@@ -150,12 +150,11 @@ class EditFlightCoordinationAction
                 // =====================================================
                 Section::make('Coordinated Boxes')
                     ->extraAttributes(['class' => 'mi-seccion-compacta'])
-                    ->columns(8)
+                    ->columns(7)
                     ->schema([
                         TextInput::make('fb')
                             ->label('FB')
                             ->numeric()
-                            ->columnSpan(2)
                             ->default(0)
                             ->minValue(0)
                             ->visible(
@@ -167,7 +166,6 @@ class EditFlightCoordinationAction
                         TextInput::make('hb')
                             ->label('HB')
                             ->numeric()
-                            ->columnSpan(2)
                             ->default(0)
                             ->minValue(0)
                             ->visible(
@@ -179,7 +177,6 @@ class EditFlightCoordinationAction
                         TextInput::make('qb')
                             ->label('QB')
                             ->numeric()
-                            ->columnSpan(2)
                             ->default(0)
                             ->minValue(0)
                             ->visible(
@@ -191,7 +188,6 @@ class EditFlightCoordinationAction
                         TextInput::make('eb')
                             ->label('EB')
                             ->numeric()
-                            ->columnSpan(2)
                             ->default(0)
                             ->minValue(0)
                             ->visible(
@@ -203,7 +199,6 @@ class EditFlightCoordinationAction
                         TextInput::make('db')
                             ->label('DB')
                             ->numeric()
-                            ->columnSpan(2)
                             ->default(0)
                             ->minValue(0)
                             ->visible(
@@ -231,14 +226,13 @@ class EditFlightCoordinationAction
 
                 Section::make('Received Boxes')
                     ->extraAttributes(['class' => 'mi-seccion-compacta'])
-                    ->columns(9)
+                    ->columns(8)
                     ->secondary()
                     ->schema([
 
                         TextInput::make('fb_r')
                             ->label('FB')
                             ->numeric()
-                            ->columnSpan(2)
                             ->default(0)
                             ->minValue(0)
                             ->visible(
@@ -250,7 +244,6 @@ class EditFlightCoordinationAction
                         TextInput::make('hb_r')
                             ->label('HB')
                             ->numeric()
-                            ->columnSpan(2)
                             ->default(0)
                             ->minValue(0)
                             ->visible(
@@ -262,7 +255,6 @@ class EditFlightCoordinationAction
                         TextInput::make('qb_r')
                             ->label('QB')
                             ->numeric()
-                            ->columnSpan(2)
                             ->default(0)
                             ->minValue(0)
                             ->visible(
@@ -274,7 +266,6 @@ class EditFlightCoordinationAction
                         TextInput::make('eb_r')
                             ->label('EB')
                             ->numeric()
-                            ->columnSpan(2)
                             ->default(0)
                             ->minValue(0)
                             ->visible(
@@ -286,7 +277,6 @@ class EditFlightCoordinationAction
                         TextInput::make('db_r')
                             ->label('DB')
                             ->numeric()
-                            ->columnSpan(2)
                             ->default(0)
                             ->minValue(0)
                             ->visible(

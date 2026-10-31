@@ -45,6 +45,7 @@ class LoadResource extends Resource
             'index' => ListLoads::route('/'),
             'create' => CreateLoad::route('/create'),
             'edit' => EditLoad::route('/{record}/edit'),
+            'coordinations' => Pages\LoadCoordinations::route('/{record}/coordinations'),
         ];
     }
 }

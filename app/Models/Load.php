@@ -4,7 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Validation\ValidationException;
+use Nnjeim\World\Models\City;
+use Nnjeim\World\Models\Country;
 
 class Load extends Model
 {
@@ -15,8 +18,7 @@ class Load extends Model
         'carrier',
         'date',
         'arrival_date',
-        'code_deep',
-        'brand_deep',
+        'thermographs',
         'booking',
         'id_logistic_company',
         'container_number',
@@ -25,6 +27,10 @@ class Load extends Model
         'seal_sticker',
         'floor',
         'num_pallets',
+        'origin_country_id',
+        'origin_city_id',
+        'destination_country_id',
+        'destination_city_id',
         'consignee',
         'entry_number',
         'status',
@@ -33,7 +39,7 @@ class Load extends Model
         'qb_status',
         'eb_status',
         'db_status',
-        'id_user',
+        // 'id_user',
         'created_by',
         'updated_by',
     ];
@@ -48,6 +54,7 @@ class Load extends Model
             'qb_status' => 'boolean',
             'eb_status' => 'boolean',
             'db_status' => 'boolean',
+            'thermographs' => 'array',
         ];
     }
 
@@ -59,10 +66,10 @@ class Load extends Model
         );
     }
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'id_user');
-    }
+    // public function user(): BelongsTo
+    // {
+    //     return $this->belongsTo(User::class, 'id_user');
+    // }
 
     public function creator(): BelongsTo
     {
@@ -129,5 +136,29 @@ class Load extends Model
         });
     }
 
+    public function coordinations(): HasMany
+    {
+        return $this->hasMany(LoadCoordination::class);
+    }
+
+    public function originCountry(): BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'origin_country_id');
+    }
+
+    public function originCity(): BelongsTo
+    {
+        return $this->belongsTo(City::class, 'origin_city_id');
+    }
+
+    public function destinationCountry(): BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'destination_country_id');
+    }
+
+    public function destinationCity(): BelongsTo
+    {
+        return $this->belongsTo(City::class, 'destination_city_id');
+    }
 
 }

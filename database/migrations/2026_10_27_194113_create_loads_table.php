@@ -29,8 +29,7 @@ return new class extends Migration
             $table->date('arrival_date')->nullable();
 
             // Información logística
-            $table->string('code_deep', 50)->nullable();
-            $table->string('brand_deep', 150)->nullable();
+            $table->json('thermographs')->nullable();
             $table->string('booking')->nullable();
             $table->foreignId('id_logistic_company')
                 ->nullable()
@@ -45,6 +44,14 @@ return new class extends Migration
             $table->enum('floor', ['si', 'no'])->nullable();
             $table->string('num_pallets')->nullable();
 
+            // Origin
+            $table->foreignId('origin_country_id')->nullable();
+            $table->foreignId('origin_city_id')->nullable();
+
+            // Destination
+            $table->foreignId('destination_country_id')->nullable();
+            $table->foreignId('destination_city_id')->nullable();
+
             // Información adicional
             $table->string('consignee')->nullable();
             $table->string('entry_number')->nullable();
@@ -56,10 +63,6 @@ return new class extends Migration
             $table->boolean('qb_status')->default(true);
             $table->boolean('eb_status')->default(true);
             $table->boolean('db_status')->default(false);
-
-            // Usuario propietario del registro
-            $table->foreignId('id_user')
-                ->constrained('users');
 
             // Auditoría
             $table->foreignId('created_by')
