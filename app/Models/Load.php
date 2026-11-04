@@ -161,4 +161,9 @@ class Load extends Model
         return $this->belongsTo(City::class, 'destination_city_id');
     }
 
+    public function pallets(): HasMany
+    {
+        return $this->hasMany(Pallet::class);
+    }
+
 }

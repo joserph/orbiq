@@ -10,7 +10,8 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/css/filament/admin/theme.css',
-                'resources/css/flight-coordinations.css'],
+                'resources/css/flight-coordinations.css',
+                'resources/css/pallets.css'],
             refresh: true,
             fonts: [
                 bunny('Instrument Sans', {

@@ -166,7 +166,16 @@ class LoadsTable
                         'coordinations',
                         ['record' => $record]
                     )),
-
+                
+                Action::make('pallets')
+                    ->label('Paletas')
+                    ->icon('heroicon-o-archive-box')
+                    ->color('success')
+                    ->url(fn ($record): string => LoadResource::getUrl(
+                        'pallets',
+                        ['record' => $record]
+                    )),
+                    
                 DeleteAction::make(),
             ])
             ->toolbarActions([
