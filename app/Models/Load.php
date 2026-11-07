@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Traits\HasUserAudit;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,6 +13,10 @@ use Nnjeim\World\Models\Country;
 
 class Load extends Model
 {
+    use HasFactory, HasUserAudit;
+
+    protected $table = 'loads';
+
     protected $fillable = [
         'shipment',
         'shipment_year',
@@ -40,8 +46,8 @@ class Load extends Model
         'eb_status',
         'db_status',
         // 'id_user',
-        'created_by',
-        'updated_by',
+        // 'created_by',
+        // 'updated_by',
     ];
 
     protected function casts(): array

@@ -225,7 +225,7 @@
                         <div class="lp-style-29">Total general de cajas</div>
                         <div class="lp-style-30">{{ number_format($grandTotals['quantity']) }}</div>
                     </div> --}}
-                    <div class="lp-total-boxes">
+                    {{-- <div class="lp-total-boxes">
                         <div class="lp-total-boxes-title">
                             Total de cajas
                         </div>
@@ -258,7 +258,65 @@
                                 Recibidas
                             </span>
                         </div>
+                    </div> --}}
+
+                    {{-- @php
+                        $palletizedBoxes = $this->getPalletizedBoxes();
+                        $coordinatedBoxes = $this->getCoordinatedBoxes();
+
+                        $boxesStatus = match (true) {
+                            $palletizedBoxes === $coordinatedBoxes => 'complete',
+                            $palletizedBoxes < $coordinatedBoxes => 'pending',
+                            default => 'excess',
+                        };
+                    @endphp --}}
+
+                    @php
+                        $palletizedBoxes = $this->getPalletizedBoxes();
+                        $coordinatedBoxes = $this->getCoordinatedBoxes();
+
+                        $percentage = $coordinatedBoxes > 0
+                            ? ($palletizedBoxes / $coordinatedBoxes) * 100
+                            : 0;
+
+                        $boxesStatus = match (true) {
+                            $percentage >= 100 => 'complete',
+                            $percentage > 50 => 'pending',
+                            default => 'excess',
+                        };
+                    @endphp
+
+
+                    <div class="lp-total-boxes lp-total-boxes-{{ $boxesStatus }}">
+                        <div class="lp-total-boxes-title">
+                            Total de cajas
+                        </div>
+
+                        <div class="lp-total-boxes-numbers">
+                            <span class="lp-total-palletized">
+                                {{ number_format($palletizedBoxes) }}
+                            </span>
+
+                            <span class="lp-total-separator">/</span>
+
+                            <span class="lp-total-coordinated">
+                                {{ number_format($coordinatedBoxes) }}
+                            </span>
+                        </div>
+
+                        <div class="lp-progress">
+                            <div
+                                class="lp-progress-bar"
+                                style="width: {{ $this->getPalletizationPercentage() }}%"
+                            ></div>
+                        </div>
+
+                        <div class="lp-total-boxes-footer">
+                            <span>Paletizadas</span>
+                            <span>Recibidas</span>
+                        </div>
                     </div>
+
 
                     @if ($summaryByClient->isNotEmpty())
                         <div class="lp-style-31">

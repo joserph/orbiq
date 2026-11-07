@@ -180,3 +180,61 @@
 .lp-actions-group button {
     margin: 0 !important;
 }
+
+
+/* VERDE: Todo paletizado */
+.lp-total-boxes-complete {
+    background: #dcfce7;
+}
+
+.lp-total-boxes-complete .lp-total-boxes-title,
+.lp-total-boxes-complete .lp-total-palletized,
+.lp-total-boxes-complete .lp-total-coordinated {
+    color: #15803d;
+}
+
+.lp-total-boxes-complete .lp-progress {
+    background: #bbf7d0;
+}
+
+.lp-total-boxes-complete .lp-progress-bar {
+    background: #16a34a;
+}
+
+/* NARANJA: Faltan cajas */
+.lp-total-boxes-pending {
+    background: #ffedd5;
+}
+
+.lp-total-boxes-pending .lp-total-boxes-title,
+.lp-total-boxes-pending .lp-total-palletized,
+.lp-total-boxes-pending .lp-total-coordinated {
+    color: #ea580c;
+}
+
+.lp-total-boxes-pending .lp-progress {
+    background: #fed7aa;
+}
+
+.lp-total-boxes-pending .lp-progress-bar {
+    background: #f97316;
+}
+
+/* ROJO: Cajas excedentes */
+.lp-total-boxes-excess {
+    background: #fee2e2;
+}
+
+.lp-total-boxes-excess .lp-total-boxes-title,
+.lp-total-boxes-excess .lp-total-palletized,
+.lp-total-boxes-excess .lp-total-coordinated {
+    color: #dc2626;
+}
+
+.lp-total-boxes-excess .lp-progress {
+    background: #fecaca;
+}
+
+.lp-total-boxes-excess .lp-progress-bar {
+    background: #dc2626;
+}

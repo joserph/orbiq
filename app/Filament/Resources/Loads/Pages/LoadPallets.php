@@ -11,6 +11,7 @@ use App\Models\Load;
 use App\Models\LoadCoordination;
 use App\Models\Pallet;
 use App\Models\PalletDetail;
+use App\Services\CustomerLoadReport;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
@@ -42,6 +43,9 @@ class LoadPallets extends Page
                 ->label('Nueva Paleta')
                 ->icon('heroicon-o-plus')
                 ->color('success')
+                ->visible(fn (): bool =>
+                    $this->getPalletizedBoxes() < $this->getCoordinatedBoxes()
+                )
                 ->action(function (): void {
 
                     DB::transaction(function (): void {
@@ -78,6 +82,20 @@ class LoadPallets extends Page
                         ])
                     );
                 }),
+            
+            Action::make('exportCustomerReport')
+                ->label('Exportar informe Excel')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('success')
+                ->visible(fn (): bool =>
+                    $this->getCoordinatedBoxes() > 0
+                    && $this->getPalletizedBoxes() === $this->getCoordinatedBoxes()
+                )
+                ->action(function (): mixed {
+                    return app(CustomerLoadReport::class)
+                        ->download($this->record);
+                }),
+
         ];
     }
 
