@@ -57,7 +57,12 @@ class CustomerLoadReport
         ]);
         $myCompany = Company::with('country', 'state', 'city')->first();
         
-        $coordinations = $load->coordinations;
+        // $coordinations = $load->coordinations;
+        $coordinations = $load->coordinations()
+            ->join('farms', 'farms.id', '=', 'load_coordinations.farm_id')
+            ->orderBy('farms.name', 'asc')
+            ->select('load_coordinations.*')
+            ->get();
 
         $details = $load->pallets
             ->flatMap(fn ($pallet) => $pallet->details);
@@ -109,12 +114,31 @@ class CustomerLoadReport
                 ->where('client_id', $client->id)
                 ->values();
             
+            // $palletsDetails = PalletDetail::whereHas('pallet', function ($query) use ($load) {
+            //     $query->where('load_id', $load->id);
+            // })
+            // ->where('client_id', $client->id)
+            // ->with('pallet')
+            // ->get();
             $palletsDetails = PalletDetail::whereHas('pallet', function ($query) use ($load) {
                 $query->where('load_id', $load->id);
             })
             ->where('client_id', $client->id)
             ->with('pallet')
-            ->get();
+            ->get()
+            ->groupBy('pallet_id')
+            ->map(function ($group) {
+                $merged = $group->first()->replicate();
+                $merged->fb = $group->sum('fb');
+                $merged->hb = $group->sum('hb');
+                $merged->qb = $group->sum('qb');
+                $merged->eb = $group->sum('eb');
+                $merged->db = $group->sum('db');
+                $merged->quantity = $group->sum('quantity');
+                return $merged;
+            })
+            ->values();
+            // dd($palletsDetails);
 
             $this->buildClientSheet(
                 $sheet,

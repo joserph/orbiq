@@ -13,6 +13,7 @@ use App\Models\Pallet;
 use App\Models\PalletDetail;
 use App\Services\CustomerLoadReport;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
@@ -82,9 +83,9 @@ class LoadPallets extends Page
                         ])
                     );
                 }),
-            
-            Action::make('exportCustomerReport')
-                ->label('Exportar informe Excel')
+            ActionGroup::make([
+                Action::make('exportCustomerReport')
+                ->label('Informes')
                 ->icon('heroicon-o-document-arrow-down')
                 ->color('success')
                 ->visible(fn (): bool =>
@@ -95,6 +96,22 @@ class LoadPallets extends Page
                     return app(CustomerLoadReport::class)
                         ->download($this->record);
                 }),
+
+            Action::make('exportLoadPlan')
+                ->label('Plano de carga')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('success')
+                ->action('exportLoadPlan')
+                ->visible(fn (): bool =>
+                    $this->getCoordinatedBoxes() > 0
+                    && $this->getPalletizedBoxes() === $this->getCoordinatedBoxes()
+                ),
+            ])
+                ->label('Reportes EXCEL')
+                ->icon('heroicon-o-document-chart-bar')
+                ->color('success')
+                ->button(),
+            
 
         ];
     }
@@ -166,9 +183,18 @@ class LoadPallets extends Page
 
     public function getPalletDetails(Pallet $pallet)
     {
+        // return PalletDetail::query()
+        //     ->with(['farm', 'client', 'loadCoordination'])
+        //     ->where('pallet_id', $pallet->id)
+        //     ->get();
         return PalletDetail::query()
             ->with(['farm', 'client', 'loadCoordination'])
-            ->where('pallet_id', $pallet->id)
+            ->join('clients', 'clients.id', '=', 'pallet_details.client_id')
+            ->join('farms', 'farms.id', '=', 'pallet_details.farm_id')
+            ->where('pallet_details.pallet_id', $pallet->id)
+            ->orderBy('clients.name', 'asc')
+            ->orderBy('farms.name', 'asc')
+            ->select('pallet_details.*')
             ->get();
     }
 
@@ -259,6 +285,12 @@ class LoadPallets extends Page
             ->success()
             ->title('Coordinación eliminada')
             ->send();
+    }
+
+    public function exportLoadPlan(): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        return app(\App\Services\LoadPlanReport::class)
+            ->download($this->record);
     }
 
 }
